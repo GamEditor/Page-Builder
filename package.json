@@ -1,0 +1,31 @@
+{
+  "name": "page-builder",
+  "version": "1.0.0",
+  "description": "a page builder with pure html, css and js output without need to coding!",
+  "keywords": [
+    "Page",
+    "builder"
+  ],
+  "homepage": "https://github.com/GamEditor/Page-Builder#readme",
+  "bugs": {
+    "url": "https://github.com/GamEditor/Page-Builder/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GamEditor/Page-Builder.git"
+  },
+  "license": "MIT",
+  "author": "Mohammad Fathi Meymand",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "nodemon app.js"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "nodemon": "^3.1.10"
+  }
+}
