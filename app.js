@@ -90,11 +90,16 @@ function runApp() {
         res.send(ejs.render(views.index, {}));
     });
 
-    app.get('/editor/edit/:project', function (req, res) {
-        fetchProject(req.params.project, function (projectData) {
+    app.get('/editor/:projectCode', function (req, res) {
+        fetchProject(req.params.projectCode, function (projectData) {
             res.send(ejs.render(views.editor, { data: projectData }));
         });
-
+    });
+    
+    app.get('/viewer/:projectCode', function (req, res) {
+        fetchProject(req.params.projectCode, function (projectData) {
+            res.send(ejs.render(views.editor, { data: projectData }));
+        });
     });
 
     app.post('/api/createNewProject', function (req, res) {
