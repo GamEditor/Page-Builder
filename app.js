@@ -6,17 +6,7 @@ const express = require('express'),
     ejs = require('ejs'),
     multer = require('multer'),
     PORT = process.env.PORT || 8080,
-    path = require('path'),
-    storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, `${projectsFolder}/${req.params.projectId}`)
-        },
-        filename: function (req, file, cb) {
-            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-            cb(null, file.fieldname + '-' + uniqueSuffix)
-        }
-    }),
-    upload = multer({ storage: storage });
+    path = require('path');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -159,6 +149,26 @@ function checkForProjectDependencies() {
         }
     });
 
+    fs.readdir('./public/uploads', function (err, data) {
+        if (err) {
+            fs.mkdir('./public/uploads', function (err) {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        }
+    });
+
+    fs.readdir('./public/preview_images', function (err, data) {
+        if (err) {
+            fs.mkdir('./public/preview_images', function (err) {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        }
+    });
+
     fs.readFile('./allProjects.json', function (err, data) {
         if (err) {
             let data = { projects: [] };
@@ -189,11 +199,11 @@ function runApp() {
             if (statusCode == 200) {
                 switch (req.params.mode) {
                     case 'editor':
-                        res.send(ejs.render(views.editor, { global_header: views.global_header, data: projectData }));
+                        res.send(ejs.render(views.editor, { global_header: views.global_header, projectData, projectId: req.params.projectId }));
                         break;
 
                     case 'viewer':
-                        res.send(ejs.render(views.viewer, { global_header: views.global_header, data: projectData }));
+                        res.send(ejs.render(views.viewer, { global_header: views.global_header, projectData }));
                         break;
 
                     default:
@@ -212,7 +222,24 @@ function runApp() {
         });
     });
 
-    app.post('/api/uploadFile', upload.single('projectFile'), function (req, res) {
+    app.post('/api/download/:projectId', function (req, res) {
+        res.send(req.params.projectId);
+    });
+
+    app.post('/api/saveProject/:projectId', function (req, res) {
+        res.send('not implemented!');
+    });
+
+    const storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, `${projectsFolder}/${req.params.projectId}`)
+        },
+        filename: function (req, file, cb) {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+            cb(null, `${uniqueSuffix}-${file.originalname}`)
+        }
+    }), upload = multer({ storage: storage })
+    app.post('/api/uploadFile/:projectId', upload.single('projectFile'), function (req, res) {
         res.send(req.file.filename);
     });
 

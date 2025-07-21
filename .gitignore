@@ -1,5 +1,7 @@
 projects/*
 allProjects.json
+public/uploads
+public/preview_images
 
 # Logs
 logs

@@ -3,9 +3,7 @@
     -ms-user-select: none;
     -moz-user-select: none;
     -webkit-user-select: none;
-    margin: 0;
     outline: 0;
-    padding: 0;
     direction: rtl;
     text-align: right;
 }
@@ -35,10 +33,10 @@
 .view {
     position: fixed;
     left: 0;
-    bottom: -100vh;
+    bottom: -100dvh;
     transition: all 0.5s;
-    width: 100vw;
-    height: 100vh;
+    width: 100dvw;
+    height: 100dvh;
     display: flex;
     align-items: flex-end;
     justify-content: center;
@@ -53,8 +51,8 @@
     background-color: white;
     bottom: 0;
     padding: 0 20px 0 20px;
-    width: calc(100vw - 150px);
-    height: 60vh;
+    width: calc(100dvw - 55px);
+    height: 99dvh;
     border-radius: 20px 20px 0 0;
     box-shadow: 0px 2px 6px 0px #9c9c9c;
 }
@@ -81,7 +79,7 @@
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url(/application/images/close.svg);
+    background-image: url(/images/close.svg);
 }
 
 .view .window .toolbar {
