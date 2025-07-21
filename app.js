@@ -78,12 +78,14 @@ function createNewProject(req, cb) {
 
         fetchProjectsList(function (statusCode, projects) {
             if (statusCode == 200) {
-                let allProjects = projects;
-                console.log(projects);
+                let allProjects = projects,
+                    now = new Date().valueOf()
 
                 allProjects.projects.push({
-                    id: projectId,
-                    name: req.body.project_Name,
+                    Id: projectId,
+                    Name: req.body.project_Name,
+                    CreationDate: now,
+                    ModificationDate: now,
                 });
 
                 updateProjects(allProjects, function (statusCode) {
@@ -96,11 +98,17 @@ function createNewProject(req, cb) {
 
         fs.mkdir(`${projectsFolder}/${projectId}`, function (err) {
             if (!err) {
-                let projectObject = {
-                    ProjectName: req.body.project_Name,
-                    PageDirection: req.body.project_Direction && (req.body.project_Direction.toLowerCase() == 'rtl' || req.body.project_Direction.toLowerCase() == 'ltr') ? req.body.project_Direction.toLowerCase() : 'rtl',
-                    Objects: []
-                }
+                let now = new Date().valueOf(),
+                    projectObject = {
+                        ProjectName: req.body.project_Name,
+                        CreationDate: now,
+                        ModificationDate: now,
+                        Page: {
+                            BackgroundColor: '#ffffff',
+                            Direction: req.body.project_Direction && (req.body.project_Direction.toLowerCase() == 'rtl' || req.body.project_Direction.toLowerCase() == 'ltr') ? req.body.project_Direction.toLowerCase() : 'rtl',
+                        },
+                        Components: []
+                    }
 
                 fs.writeFile(`${projectsFolder}/${projectId}/config.json`, JSON.stringify(projectObject), function (err) {
                     if (!err) {

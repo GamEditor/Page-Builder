@@ -5,36 +5,52 @@ function downloadProject(id) {
     })
 }
 function loadProjectsOnUi() {
-    let projetctsElems = ''
+    let projetctsElems =
+        `<table>
+        <thead>
+            <tr>
+                <th><div class="tableHeader" data-title="پروژه های شما"></div></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th><input type="button" id="btnOpenNewProjectView" value="ساختن پروژه جدید"></th>
+            </tr>
+            <tr>
+                <th>پیش نمایش یا #</th>
+                <th>نام</th>
+                <th>تاریخ ایجاد</th>
+                <th>تاریخ آخرین تغییر</th>
+                <th>فعالیت های موجود</th>
+            </tr>
+        </thead>
+        <tbody>`
     if (PROJECTS.length > 0) {
         for (let i = 0; i < PROJECTS.length; i++) {
             projetctsElems +=
-                `<div class="project" data-id="${PROJECTS[i].id}">
-                    <div class="projectPreview">
-                        <img src="" alt="پیش نمایش پروژه">
-                    </div>
-                    <div class="projectDetails">
-                        <div class="projectName">${PROJECTS[i].name}</div>
-                        <div class="flex">
-                            <div class="projectBtn projectBtnView" onclick="openProject('viewer', ${PROJECTS[i].id})">مشاهده</div>
-                            <div class="projectBtn projectBtnEdit" onclick="openProject('editor', ${PROJECTS[i].id})">ویرایش</div>
-                            <div class="projectBtn projectBtnDownload" onclick="downloadProject(${PROJECTS[i].id})">دانلود خروجی نهایی</div>
-                        </div>
-                    </div>
-                </div>`
+                `<tr>
+                    <td>${i + 1}</td>
+                    <td>${PROJECTS[i].Name}</td>
+                    <td class="ltr">${getJalaliDateTimeText(new Date(PROJECTS[i].CreationDate))}</td>
+                    <td class="ltr">${getJalaliDateTimeText(new Date(PROJECTS[i].ModificationDate))}</td>
+                    <td>
+                        <div class="btn" onclick="openProject('editor', ${PROJECTS[i].Id})">ویرایش</div>
+                        <div class="btn" onclick="openProject('viewer', ${PROJECTS[i].Id})">مشاهده</div>
+                        <div class="btn" onclick="downloadProject(${PROJECTS[i].Id})">دانلود خروجی نهایی</div>
+                    </td>
+                </tr>`
         }
     }
-    $('#allProjects').html(projetctsElems)
+    $('#projectsTable').html(`${projetctsElems}</tbody></table>`)
+
+    $('#btnOpenNewProjectView').on('click', function (e) {
+        openView('#newProject')
+    })
 }
 
 $(function (e) {
     $('select').select2({})
 
     loadProjectsOnUi()
-
-    $('#btnOpenNewProjectView').on('click', function (e) {
-        openView('#newProject')
-    })
 
     $('#btnCreateNewProject').on('click', function (e) {
         sendWebRequest('POST', '/api/createNewProject', { project_Name: $('#project_Name').val(), project_Direction: $('#project_Direction').val() }, function (err, projectId) {

@@ -22,9 +22,18 @@
         const PROJECT_DATA = JSON.parse('<%-projectData%>')
     </script>
 
-    <div id="page"></div>
+    <div id="EditorContainer">
+        <div id="ComponentsAdder"></div>
+        <div id="EditorArea">
+            <div id="Page"></div>
+            <div id="Viewport"></div>
+        </div>
+        <div id="Timeline"></div>
+        <div id="ComponentsThree"></div>
+        <div id="ComponentsProperties"></div>
+    </div>
 
-    <div id="fileuploader">
+    <div id="fileuploader" class="hidden">
         <form id="form_fileUploader" method="POST" action="/api/uploadFile/<%-projectId%>"
             enctype="multipart/form-data">
             <input type="file" name="projectFile">

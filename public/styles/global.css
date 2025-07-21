@@ -4,8 +4,22 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     outline: 0;
+    margin: 0;
+    padding: 0;
     direction: rtl;
     text-align: right;
+}
+
+.rtl {
+    direction: rtl;
+}
+
+.ltr {
+    direction: ltr;
+}
+
+.hidden {
+    display: none;
 }
 
 [data-title] {
