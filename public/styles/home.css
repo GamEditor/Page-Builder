@@ -1,0 +1,24 @@
+#allProjects {
+    position: relative;
+}
+
+#allProjects .project {
+    display: inline-block;
+    width: 250px;
+    height: 350px;
+    border: 1px solid gray;
+    border-radius: 10px;
+}
+
+#allProjects .project .projectPreview {
+    height: 250px;
+}
+
+#allProjects .project .projectDetails {
+    height: 100px;
+}
+
+#allProjects .project .projectBtn {
+    cursor: pointer;
+    margin-left: 10px;
+}

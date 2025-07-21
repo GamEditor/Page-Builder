@@ -6,9 +6,10 @@ const express = require('express'),
     ejs = require('ejs'),
     multer = require('multer'),
     PORT = process.env.PORT || 8080,
+    path = require('path'),
     storage = multer.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, `${projectsFolder}/${req.params.projectCode}`)
+            cb(null, `${projectsFolder}/${req.params.projectId}`)
         },
         filename: function (req, file, cb) {
             const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
@@ -19,10 +20,13 @@ const express = require('express'),
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(express.static(path.resolve('./public')));
 
 const views = {
+    global_header: './views/global_header.ejs',
     index: './views/index.ejs',
     editor: './views/editor.ejs',
+    viewer: './views/viewer.ejs',
     err_404: './views/errors/404.ejs',
 }
 
@@ -46,33 +50,92 @@ function getViewsBasicContent(cb) {
     }
 }
 
-function getNewProjectCode(req) {
+function getNewProjectId(req) {
     return new Date().valueOf();
 }
 
-function createNewProject(req, cb) {
-    let projectCode = getNewProjectCode(req);
-    fs.mkdir(`${projectsFolder}/${projectCode}`, function (err) {
+function fetchProjectsList(cb) {
+    fs.readFile('./allProjects.json', function (err, data) {
         if (!err) {
-            fs.writeFile(`${projectsFolder}/${projectCode}/config.json`, '{}', function (err) {
-                if (!err) {
-                    if (cb) {
-                        cb(projectCode);
-                    }
-                }
-            });
+            if (cb) {
+                cb(200, JSON.parse(data));
+            }
+        } else {
+            if (cb) {
+                cb(500, 'Unable to load projects!');
+            }
+        }
+    })
+}
 
+function updateProjects(newData, cb) {
+    fs.writeFile('./allProjects.json', JSON.stringify(newData), { encoding: 'utf-8' }, function (err) {
+        if (err) {
+            if (cb) {
+                cb(200);
+            }
+        } else {
+            if (cb) {
+                cb(500);
+            }
         }
     });
 }
 
+function createNewProject(req, cb) {
+    if (req.body.project_Name && req.body.project_Name != '') {
+        let projectId = getNewProjectId(req);
+
+        fetchProjectsList(function (statusCode, projects) {
+            if (statusCode == 200) {
+                let allProjects = projects;
+                console.log(projects);
+
+                allProjects.projects.push({
+                    id: projectId,
+                    name: req.body.project_Name,
+                });
+
+                updateProjects(allProjects, function (statusCode) {
+                    if (statusCode != 200) {
+                        console.log('Unable to update projects');
+                    }
+                });
+            }
+        });
+
+        fs.mkdir(`${projectsFolder}/${projectId}`, function (err) {
+            if (!err) {
+                let projectObject = {
+                    ProjectName: req.body.project_Name,
+                    PageDirection: req.body.project_Direction && (req.body.project_Direction.toLowerCase() == 'rtl' || req.body.project_Direction.toLowerCase() == 'ltr') ? req.body.project_Direction.toLowerCase() : 'rtl',
+                    Objects: []
+                }
+
+                fs.writeFile(`${projectsFolder}/${projectId}/config.json`, JSON.stringify(projectObject), function (err) {
+                    if (!err) {
+                        if (cb) {
+                            cb(200, projectId);
+                        }
+                    }
+                });
+
+            }
+        });
+    } else {
+        if (cb) {
+            cb(400, 'you must send project_Name');
+        }
+    }
+}
+
 /**
  * 
- * @param {Number} projectCode 
+ * @param {Number} projectId 
  * @param {function(Number, String): void} cb 
  */
-function fetchProject(projectCode, cb) {
-    fs.readFile(`${projectsFolder}/${projectCode}/config.json`, { encoding: 'utf-8' }, function (err, data) {
+function fetchProject(projectId, cb) {
+    fs.readFile(`${projectsFolder}/${projectId}/config.json`, { encoding: 'utf-8' }, function (err, data) {
         if (!err) {
             if (cb) {
                 cb(200, data);
@@ -85,26 +148,67 @@ function fetchProject(projectCode, cb) {
     });
 }
 
-function runApp() {
-    app.get('/', function (req, res) {
-        res.send(ejs.render(views.index, {}));
+function checkForProjectDependencies() {
+    fs.readdir('./projects', function (err, data) {
+        if (err) {
+            fs.mkdir('./projects', function (err) {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        }
     });
 
-    app.get('/editor/:projectCode', function (req, res) {
-        fetchProject(req.params.projectCode, function (projectData) {
-            res.send(ejs.render(views.editor, { data: projectData }));
+    fs.readFile('./allProjects.json', function (err, data) {
+        if (err) {
+            let data = { projects: [] };
+            fs.writeFile('./allProjects.json', JSON.stringify(data), { encoding: 'utf-8' }, function (err) {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        }
+    });
+}
+
+function runApp() {
+    checkForProjectDependencies();
+
+    app.get('/', function (req, res) {
+        fetchProjectsList(function (statusCode, projects) {
+            if (statusCode == 200) {
+                res.send(ejs.render(views.index, { global_header: views.global_header, projects: JSON.stringify(projects.projects) }));
+            } else {
+                res.send(ejs.render(views.index, { global_header: views.global_header, projects: [] }));
+            }
         });
     });
-    
-    app.get('/viewer/:projectCode', function (req, res) {
-        fetchProject(req.params.projectCode, function (projectData) {
-            res.send(ejs.render(views.editor, { data: projectData }));
+
+    app.get('/app/:mode/:projectId', function (req, res) {
+        fetchProject(req.params.projectId, function (statusCode, projectData) {
+            if (statusCode == 200) {
+                switch (req.params.mode) {
+                    case 'editor':
+                        res.send(ejs.render(views.editor, { global_header: views.global_header, data: projectData }));
+                        break;
+
+                    case 'viewer':
+                        res.send(ejs.render(views.viewer, { global_header: views.global_header, data: projectData }));
+                        break;
+
+                    default:
+                        res.send(ejs.render(views.err_404, {}));
+                        break;
+                }
+            } else {
+                res.send(ejs.render(views.err_404, {}));
+            }
         });
     });
 
     app.post('/api/createNewProject', function (req, res) {
-        createNewProject(req, function (projectCode) {
-            res.send(projectCode);
+        createNewProject(req, function (statusCode, projectId) {
+            res.status(statusCode).send(projectId);
         });
     });
 
