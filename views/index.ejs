@@ -36,6 +36,38 @@
                         <option value="rtl">چپ به راست (ltr)</option>
                     </select>
 
+                    <div class="pdrl10" data-title="ابعاد صفحه (قابل تغییر در ویرایشگر)"></div>
+                    <select id="project_StarterSize">
+                        <optgroup label="دسکتاپ">
+                            <option value="1920x1080">مانیتور (1920x1080)</option>
+                            <option value="1280x720">مانیتور (1280x720)</option>
+                            <option value="1728x1117">مک بوک پرو 16 اینچی (1728x1117)</option>
+                            <option value="1512x982">مک بوک پرو 14 اینچی (1512x982)</option>
+                            <option value="1440x960">سرفیس پرو 8 (1440x960)</option>
+                        </optgroup>
+                        <optgroup label="تبلت">
+                            <option value="1024x1366">آی پد پرو 12.9 اینچی (1024x1366)</option>
+                            <option value="744x1133">آی پد مینی 8.3 اینچی (744x1133)</option>
+                            <option value="1280x800">اندروید (1280x800)</option>
+                        </optgroup>
+                        <optgroup label="موبایل">
+                            <option value="440x956">آیفون 16 پرو مکس (440x956)</option>
+                            <option value="393x852">آیفون 16 (393x852)</option>
+                            <option value="320x568">آیفون SE (320x568)</option>
+                            <option value="412x917">اندروید (412x917)</option>
+                        </optgroup>
+                    </select>
+                    <div class="pdrl10 flexFullCenter">
+                        <div style="width: 50%;">
+                            <div data-title="طول (پیکسل)"></div>
+                            <div><input type="number" id="project_Width"></div>
+                        </div>
+                        <div style="width: 50%;">
+                            <div data-title="ارتفاع (پیکسل)"></div>
+                            <div><input type="number" id="project_Height"></div>
+                        </div>
+                    </div>
+
                     <div class="pdrl10" style="text-align: left;">
                         <input type="button" value="ایجاد پروژه جدید و شروع" id="btnCreateNewProject">
                     </div>

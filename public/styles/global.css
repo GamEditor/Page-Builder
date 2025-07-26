@@ -34,10 +34,15 @@
     padding: 0 10px;
 }
 
-.flexCenter {
+.flexCenter,
+.flexFullCenter {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.flexFullCenter {
+    height: 100%;
 }
 
 .flex {

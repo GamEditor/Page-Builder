@@ -3,24 +3,80 @@ body {
 }
 
 #EditorContainer {
-    
+    position: relative;
+    width: 100dvw;
+    height: 100dvh;
+}
+
+#EditorContainer>div {
+    position: absolute;
+    overflow: auto;
+}
+
+#ComponentsAdder,
+#Timeline,
+#ComponentsThree,
+#ComponentsProperties {
+    background-color: white;
+    border-radius: 4px;
+    z-index: 100000;
+    box-shadow: 0 0 10px #00000099;
 }
 
 #ComponentsAdder {
+    height: 50dvh;
+    left: 1dvw;
+    top: 3dvh;
+}
+
+#ComponentsAdder.open {
     width: 200px;
-    height: 100dvh;
-    background-color: white;
+}
+
+#Timeline {
+    width: 83dvw;
+    left: 1dvw;
+    bottom: 3dvh;
+}
+
+#Timeline.open {
+    height: 40dvh;
 }
 
 #EditorArea {
-    position: relative;
+    position: relative !important;
+    width: 100dvw;
+    height: 100dvh;
+    top: 0;
+    left: 0;
 }
 
 #Page {
     position: absolute;
+    background-color: white;
 }
 
 #Viewport {
     position: absolute;
     border: 1px dashed red;
+}
+
+#ComponentsThree {
+    height: 50dvh;
+    right: 1dvw;
+    top: 3dvh;
+}
+
+#ComponentsThree.open {
+    width: 200px;
+}
+
+#ComponentsProperties {
+    height: 40dvh;
+    right: 1dvw;
+    bottom: 3dvh;
+}
+
+#ComponentsProperties.open {
+    width: 200px;
 }

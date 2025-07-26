@@ -76,10 +76,9 @@ function createNewProject(req, cb) {
     if (req.body.project_Name && req.body.project_Name != '') {
         let projectId = getNewProjectId(req);
 
-        fetchProjectsList(function (statusCode, projects) {
+        fetchProjectsList(function (statusCode, allProjects) {
             if (statusCode == 200) {
-                let allProjects = projects,
-                    now = new Date().valueOf()
+                let now = new Date().valueOf();
 
                 allProjects.projects.push({
                     Id: projectId,
@@ -90,7 +89,7 @@ function createNewProject(req, cb) {
 
                 updateProjects(allProjects, function (statusCode) {
                     if (statusCode != 200) {
-                        console.log('Unable to update projects');
+                        console.log('Unable to update projects (create)');
                     }
                 });
             }
@@ -104,6 +103,8 @@ function createNewProject(req, cb) {
                         CreationDate: now,
                         ModificationDate: now,
                         Page: {
+                            Width: req.body.project_Width ? req.body.project_Width : '1920px',
+                            Height: req.body.project_Height ? req.body.project_Height : '1080px',
                             BackgroundColor: '#ffffff',
                             Direction: req.body.project_Direction && (req.body.project_Direction.toLowerCase() == 'rtl' || req.body.project_Direction.toLowerCase() == 'ltr') ? req.body.project_Direction.toLowerCase() : 'rtl',
                         },
@@ -125,6 +126,36 @@ function createNewProject(req, cb) {
             cb(400, 'you must send project_Name');
         }
     }
+}
+
+function deleteProject(projectId, cb) {
+    fs.rm(`${projectsFolder}/${projectId}`, { recursive: true, force: true }, function (err) {
+        if (err) {
+            if (cb) {
+                cb(500, err);
+            }
+        } else {
+            if (cb) {
+                cb(200, 'deleted');
+            }
+
+            fetchProjectsList(function (statusCode, allProjects) {
+                if (statusCode == 200) {
+                    for (let i = 0; i < allProjects.projects.length; i++) {
+                        if (allProjects.projects[i].Id == projectId) {
+                            allProjects.projects.splice(i, 1)
+                        }
+                    }
+
+                    updateProjects(allProjects, function (statusCode) {
+                        if (statusCode != 200) {
+                            console.log('Unable to update projects (delete)');
+                        }
+                    });
+                }
+            });
+        }
+    });
 }
 
 /**
@@ -227,6 +258,12 @@ function runApp() {
     app.post('/api/createNewProject', function (req, res) {
         createNewProject(req, function (statusCode, projectId) {
             res.status(statusCode).send(projectId);
+        });
+    });
+
+    app.post('/api/deleteProject/:projectId', function (req, res) {
+        deleteProject(req.params.projectId, function (statusCode, message) {
+            res.status(statusCode).send(message);
         });
     });
 
