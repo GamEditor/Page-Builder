@@ -19,32 +19,37 @@ function uploadToServer() {
     })
     xhr.send(formData)
 }
+
+let zoomLevel = 1 // مقدار اولیه زوم
+const zoomSpeed = 0.1
+document.addEventListener('wheel', function (e) {
+    if (e.ctrlKey) {
+        e.preventDefault()
+
+        if (e.deltaY < 0) {
+            zoomLevel += zoomSpeed
+        } else {
+            zoomLevel -= zoomSpeed
+        }
+
+        zoomLevel = Math.min(Math.max(zoomLevel, 0.2), 1) // بین 0.5 تا 3
+
+        const target = document.getElementById('EditorArea')
+        if (target) {
+            target.style.transform = `scale(${zoomLevel})`
+            target.style.transformOrigin = 'center center'
+        }
+    }
+}, { passive: false })
+
 $(function (e) {
     console.log(PROJECT_DATA)
-    $('#Page').css({ width: PROJECT_DATA.Page.Width, height: PROJECT_DATA.Page.Height * 2, transform: 'scale(0.4)' })
+    $('#Page').css({
+        width: PROJECT_DATA.Page.Width,
+        height: PROJECT_DATA.Page.Height * 2,
+        direction: PROJECT_DATA.Page.Direction,
+        'background-color': PROJECT_DATA.Page.BackgroundColor,
+        // transform: 'scale(0.4)',
+    })
     $('#Viewport').css({ width: PROJECT_DATA.Page.Width, height: PROJECT_DATA.Page.Height })
 })
-
-    (function ($) {
-        var isCtrl = false;
-
-        function ctrlCheck(e) {
-            if (e.which === 17) {
-                isCtrl = e.type === 'keydown' ? true : false;
-            }
-        }
-
-        function wheelCheck(e, delta) {
-            // `delta` will be the distance that the page would have scrolled;
-            // might be useful for increasing the SVG size, might not
-            if (isCtrl) {
-                e.preventDefault();
-                yourResizeMethod(delta);
-            }
-        }
-
-        $(document).
-            keydown(ctrlCheck).
-            keyup(ctrlCheck).
-            mousewheel(wheelCheck);
-    }(jQuery));

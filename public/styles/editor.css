@@ -24,13 +24,9 @@ body {
 }
 
 #ComponentsAdder {
-    height: 50dvh;
+    height: 65dvh;
     left: 1dvw;
     top: 3dvh;
-}
-
-#ComponentsAdder.open {
-    width: 200px;
 }
 
 #Timeline {
@@ -40,7 +36,7 @@ body {
 }
 
 #Timeline.open {
-    height: 40dvh;
+    height: 25dvh;
 }
 
 #EditorArea {
@@ -58,7 +54,7 @@ body {
 
 #Viewport {
     position: absolute;
-    border: 1px dashed red;
+    border: 2px dashed gray;
 }
 
 #ComponentsThree {
@@ -67,16 +63,14 @@ body {
     top: 3dvh;
 }
 
-#ComponentsThree.open {
-    width: 200px;
+#ComponentsAdder.open,
+#ComponentsThree.open,
+#ComponentsProperties.open {
+    width: 14dvw;
 }
 
 #ComponentsProperties {
     height: 40dvh;
     right: 1dvw;
     bottom: 3dvh;
-}
-
-#ComponentsProperties.open {
-    width: 200px;
 }

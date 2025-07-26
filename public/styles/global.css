@@ -1,3 +1,7 @@
+:root {
+    --border-gray-color: #cbcbcb;
+}
+
 * {
     user-select: none;
     -ms-user-select: none;
@@ -6,8 +10,6 @@
     outline: 0;
     margin: 0;
     padding: 0;
-    direction: rtl;
-    text-align: right;
 }
 
 .rtl {
@@ -34,6 +36,22 @@
     padding: 0 10px;
 }
 
+.pd4-10 {
+    padding: 4px 10px;
+}
+
+.brdButton {
+    border-bottom: 1px solid var(--border-gray-color);
+}
+
+.brdRight {
+    border-right: 1px solid var(--border-gray-color);
+}
+
+.w10 {
+    width: 10%;
+}
+
 .flexCenter,
 .flexFullCenter {
     display: flex;
@@ -47,6 +65,7 @@
 
 .flex {
     display: flex;
+    align-items: center;
 }
 
 .view {
@@ -119,7 +138,8 @@
 .view input[type="date"],
 .view input[type="text"],
 .view input[type="number"],
-.view input[type="password"] {
+.view input[type="password"],
+.view input[type="color"] {
     margin: 0 10px;
     padding: 2px 10px;
     width: calc(100% - 40px);

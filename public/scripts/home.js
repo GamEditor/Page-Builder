@@ -64,10 +64,11 @@ $(function (e) {
 
     $('#btnCreateNewProject').on('click', function (e) {
         let data = {
-            project_Name: $('#project_Name').val(),
-            project_Direction: $('#project_Direction').val(),
-            project_Width: $('#project_Width').val(),
-            project_Height: $('#project_Height').val(),
+            Name: $('#project_Name').val(),
+            BackgroundColor: $('#project_BackgroundColor').val(),
+            Direction: $('#project_Direction').val(),
+            Width: $('#project_Width').val(),
+            Height: $('#project_Height').val(),
         }
         sendWebRequest('POST', '/api/createNewProject', data, function (err, projectId) {
             if (!err) {

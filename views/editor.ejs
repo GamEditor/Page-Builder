@@ -24,14 +24,32 @@
 
     <div id="EditorContainer">
         <div id="ComponentsAdder" class="open"></div>
-        <div id="EditorArea">
+        <div id="EditorArea" style="transition: transform 0.2s ease;">
             <div id="Page">
                 <div id="Viewport"></div>
                 <!-- <div class="Component"></div> -->
                 <!-- <div class="Component"></div> -->
             </div>
         </div>
-        <div id="Timeline" class="open"></div>
+        <div id="Timeline" class="open">
+            <div class="pd4-10 flex brdButton" data-title="Animation Keyframe"></div>
+            <div id="PageScrollYEditor" class="flex">
+                <div id="PageScrollYEditorTitleAndDescription" class="flex pd4-10 w10 brdRight">
+                    <div>Page Scroll Y</div>
+                    <div>
+                        <button id="PageScrollYEditorPlayPause" class="flex">
+                            <img src="/images/play.svg" alt="playAndPause">
+                        </button>
+                    </div>
+                    <div>
+                        <button id="PageScrollYEditorPlayPause" class="flex">
+                            <img src="/images/jumpToStart.svg" alt="playAndPause">
+                        </button>
+                    </div>
+                </div>
+                <div id="PageScrollYEditorTimeline"></div>
+            </div>
+        </div>
         <div id="ComponentsThree" class="open"></div>
         <div id="ComponentsProperties" class="open"></div>
     </div>

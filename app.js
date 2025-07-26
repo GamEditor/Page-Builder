@@ -73,7 +73,7 @@ function updateProjects(newData, cb) {
 }
 
 function createNewProject(req, cb) {
-    if (req.body.project_Name && req.body.project_Name != '') {
+    if (req.body.Name && req.body.Name != '') {
         let projectId = getNewProjectId(req);
 
         fetchProjectsList(function (statusCode, allProjects) {
@@ -82,7 +82,7 @@ function createNewProject(req, cb) {
 
                 allProjects.projects.push({
                     Id: projectId,
-                    Name: req.body.project_Name,
+                    Name: req.body.Name,
                     CreationDate: now,
                     ModificationDate: now,
                 });
@@ -99,14 +99,14 @@ function createNewProject(req, cb) {
             if (!err) {
                 let now = new Date().valueOf(),
                     projectObject = {
-                        ProjectName: req.body.project_Name,
+                        ProjectName: req.body.Name,
                         CreationDate: now,
                         ModificationDate: now,
                         Page: {
-                            Width: req.body.project_Width ? req.body.project_Width : '1920px',
-                            Height: req.body.project_Height ? req.body.project_Height : '1080px',
-                            BackgroundColor: '#ffffff',
-                            Direction: req.body.project_Direction && (req.body.project_Direction.toLowerCase() == 'rtl' || req.body.project_Direction.toLowerCase() == 'ltr') ? req.body.project_Direction.toLowerCase() : 'rtl',
+                            Width: req.body.Width ? req.body.Width : '1920px',
+                            Height: req.body.Height ? req.body.Height : '1080px',
+                            BackgroundColor: req.body.BackgroundColor ? req.body.BackgroundColor : '#ffffff',
+                            Direction: req.body.Direction && (req.body.Direction.toLowerCase() == 'rtl' || req.body.Direction.toLowerCase() == 'ltr') ? req.body.Direction.toLowerCase() : 'rtl',
                         },
                         Components: []
                     }
@@ -123,7 +123,7 @@ function createNewProject(req, cb) {
         });
     } else {
         if (cb) {
-            cb(400, 'you must send project_Name');
+            cb(400, 'you must send Name');
         }
     }
 }
@@ -181,16 +181,6 @@ function checkForProjectDependencies() {
     fs.readdir('./projects', function (err, data) {
         if (err) {
             fs.mkdir('./projects', function (err) {
-                if (err) {
-                    console.log(err);
-                }
-            });
-        }
-    });
-
-    fs.readdir('./public/uploads', function (err, data) {
-        if (err) {
-            fs.mkdir('./public/uploads', function (err) {
                 if (err) {
                     console.log(err);
                 }
