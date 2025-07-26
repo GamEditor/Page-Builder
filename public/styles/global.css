@@ -20,6 +20,10 @@
     direction: ltr;
 }
 
+.cupo {
+    cursor: pointer;
+}
+
 .hidden {
     display: none;
 }
@@ -30,6 +34,10 @@
 
 [data-title]::before {
     content: attr(data-title);
+}
+
+.open [data-title-open]::before {
+    content: attr(data-title-open);
 }
 
 .pdrl10 {
@@ -66,6 +74,11 @@
 .flex {
     display: flex;
     align-items: center;
+}
+
+.flexColumn {
+    display: flex;
+    flex-direction: column;
 }
 
 .view {

@@ -7,7 +7,10 @@
     <title>صفحه ساز - ویرایشگر</title>
 
     <%-global_header%>
+        <link rel="stylesheet" href="/styles/components.css">
         <link rel="stylesheet" href="/styles/editor.css">
+
+        <script src="/scripts/components.js"></script>
         <script src="/scripts/editor.js"></script>
 
         <script src="/libs/three.js/build/three.min.js"></script>
@@ -23,35 +26,46 @@
     </script>
 
     <div id="EditorContainer">
-        <div id="ComponentsAdder" class="open"></div>
+        <div id="ComponentsAdder" class="open">
+            <div class="pd4-10 brdButton" data-title-open="Components"></div>
+            <div id="ComponentsAdderComponentsContainer"></div>
+        </div>
         <div id="EditorArea" style="transition: transform 0.2s ease;">
             <div id="Page">
                 <div id="Viewport"></div>
-                <!-- <div class="Component"></div> -->
-                <!-- <div class="Component"></div> -->
             </div>
         </div>
         <div id="Timeline" class="open">
-            <div class="pd4-10 flex brdButton" data-title="Animation Keyframe"></div>
+            <div class="pd4-10 flex brdButton" data-title-open="Animation Keyframe"></div>
             <div id="PageScrollYEditor" class="flex">
-                <div id="PageScrollYEditorTitleAndDescription" class="flex pd4-10 w10 brdRight">
-                    <div>Page Scroll Y</div>
-                    <div>
-                        <button id="PageScrollYEditorPlayPause" class="flex">
-                            <img src="/images/play.svg" alt="playAndPause">
-                        </button>
+                <div class="flexColumn w10 brdRight">
+                    <div id="PageScrollYEditorTitleAndDescription" class="flex pd4-10 brdButton">
+                        <div>Page Scroll Y</div>
+                        <div>
+                            <button id="PageScrollYEditorPlayPause" class="flex">
+                                <img src="/images/play.svg" alt="playAndPause">
+                            </button>
+                        </div>
+                        <div>
+                            <button id="PageScrollYEditorPlayPause" class="flex">
+                                <img src="/images/jumpToStart.svg" alt="playAndPause">
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <button id="PageScrollYEditorPlayPause" class="flex">
-                            <img src="/images/jumpToStart.svg" alt="playAndPause">
-                        </button>
+                    <div id="PageScrollYEditorAnimatedComponents" class="pd4-10">
+                        animated components
                     </div>
                 </div>
+
                 <div id="PageScrollYEditorTimeline"></div>
             </div>
         </div>
-        <div id="ComponentsThree" class="open"></div>
-        <div id="ComponentsProperties" class="open"></div>
+        <div id="ComponentsTree" class="open">
+            <div class="pd4-10 brdButton" data-title-open="Tree"></div>
+        </div>
+        <div id="ComponentsProperties" class="open">
+            <div class="pd4-10 brdButton" data-title-open="Properties"></div>
+        </div>
     </div>
 
     <div id="fileuploader" class="hidden">

@@ -3,9 +3,9 @@ body {
 }
 
 #EditorContainer {
-    position: relative;
-    width: 100dvw;
     height: 100dvh;
+    overflow: hidden;
+    position: relative;
 }
 
 #EditorContainer>div {
@@ -15,7 +15,7 @@ body {
 
 #ComponentsAdder,
 #Timeline,
-#ComponentsThree,
+#ComponentsTree,
 #ComponentsProperties {
     background-color: white;
     border-radius: 4px;
@@ -40,11 +40,7 @@ body {
 }
 
 #EditorArea {
-    position: relative !important;
-    width: 100dvw;
-    height: 100dvh;
-    top: 0;
-    left: 0;
+    overflow: visible !important;
 }
 
 #Page {
@@ -57,14 +53,14 @@ body {
     border: 2px dashed gray;
 }
 
-#ComponentsThree {
+#ComponentsTree {
     height: 50dvh;
     right: 1dvw;
     top: 3dvh;
 }
 
 #ComponentsAdder.open,
-#ComponentsThree.open,
+#ComponentsTree.open,
 #ComponentsProperties.open {
     width: 14dvw;
 }
@@ -73,4 +69,12 @@ body {
     height: 40dvh;
     right: 1dvw;
     bottom: 3dvh;
+}
+
+.ComponentAdder {
+    transition: all 0.2s;
+}
+
+.ComponentAdder:hover {
+    background-color: #a1a1a1;
 }

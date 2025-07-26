@@ -20,6 +20,49 @@ function uploadToServer() {
     xhr.send(formData)
 }
 
+function addComponentToPage(componentType, left, top) {
+    console.log({ left, top })
+    let newComponent
+    switch (componentType) {
+        case 'Component_3D':
+            break
+
+        case 'Component_Button':
+            newComponent = new Component_Button(document.getElementById('Page'), 100, 40, left, top)
+            break
+
+        case 'Component_Image':
+            break
+
+        case 'Component_Link':
+            break
+
+        case 'Component_Text':
+            break
+
+        case 'Component_Video':
+            break
+    }
+
+    PROJECT_DATA.Components.push(newComponent)
+}
+
+let isAddingComponent = false
+function setupComponentAdderButtons() {
+    $('.ComponentAdder').on('click', function (e) {
+        if (!isAddingComponent) {
+            let componentType = $(this).attr('data-type')
+            $('#Page').addClass('addingNewComponent')
+            $('#Page.addingNewComponent').one('click', function (e) {
+                console.log(e)
+
+                $(this).removeClass('addingNewComponent')
+                addComponentToPage(componentType, e.offsetX, e.offsetY)
+            })
+        }
+    })
+}
+
 let zoomLevel = 1 // مقدار اولیه زوم
 const zoomSpeed = 0.1
 document.addEventListener('wheel', function (e) {
@@ -44,6 +87,19 @@ document.addEventListener('wheel', function (e) {
 
 $(function (e) {
     console.log(PROJECT_DATA)
+
+    let componentsAdderElements =
+        `
+        <div class="ComponentAdder cupo pd4-10" data-type="${Component_3D.name}">${Component_3D.getType()}</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Button.name}">${Component_Button.getType()}</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Image.name}">${Component_Image.getType()}</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Link.name}">${Component_Link.getType()}</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Text.name}">${Component_Text.getType()}</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Video.name}">${Component_Video.getType()}</div>
+        `
+    $('#ComponentsAdderComponentsContainer').html(componentsAdderElements)
+    setupComponentAdderButtons()
+
     $('#Page').css({
         width: PROJECT_DATA.Page.Width,
         height: PROJECT_DATA.Page.Height * 2,
