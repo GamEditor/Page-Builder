@@ -25,6 +25,7 @@ function addComponentToPage(componentType, left, top) {
     let newComponent
     switch (componentType) {
         case 'Component_3D':
+            newComponent = new Component_3D(document.getElementById('Page'), 100, 40, left, top)
             break
 
         case 'Component_Button':
@@ -32,15 +33,19 @@ function addComponentToPage(componentType, left, top) {
             break
 
         case 'Component_Image':
+            newComponent = new Component_Image(document.getElementById('Page'), 100, 40, left, top)
             break
 
         case 'Component_Link':
+            newComponent = new Component_Link(document.getElementById('Page'), 100, 40, left, top)
             break
 
         case 'Component_Text':
+            newComponent = new Component_Text(document.getElementById('Page'), 100, 40, left, top)
             break
 
         case 'Component_Video':
+            newComponent = new Component_Video(document.getElementById('Page'), 100, 40, left, top)
             break
     }
 
