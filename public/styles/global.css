@@ -24,6 +24,10 @@
     cursor: pointer;
 }
 
+.ovau {
+    overflow: auto;
+}
+
 .hidden {
     display: none;
 }

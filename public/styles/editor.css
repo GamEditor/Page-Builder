@@ -1,5 +1,6 @@
 body {
-    background-color: lightgray;
+    background-color: #f5f5f5;
+    font-family: Arial, sans-serif;
 }
 
 #EditorContainer {
@@ -40,7 +41,8 @@ body {
 }
 
 #EditorArea {
-    overflow: visible !important;
+    width: 100dvw;
+    height: 100dvh;
 }
 
 #Page {
@@ -77,4 +79,13 @@ body {
 
 .ComponentAdder:hover {
     background-color: #a1a1a1;
+}
+
+.Component.Editable {
+    border: 2px solid #4545ff;
+    cursor: move;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }

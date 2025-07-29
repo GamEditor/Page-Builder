@@ -1,5 +1,3 @@
-// اصلاح ساختار کلاس‌های مشتق‌شده از Component
-
 class Component {
     Type = ''
     ComponentId
@@ -11,8 +9,10 @@ class Component {
     Element // all properties like left, top, width, height, etc can get directly from this attribute and save into related properties
 
     constructor(parentDiv, elemText, width, height, left, top) {
+        let _this = this
+
         this.ComponentId = new Date().valueOf()
-        this.ParentDiv = parentDiv
+        this.ParentDiv = document.getElementById(parentDiv)
         this.Width = width
         this.Height = height
         this.Left = left
@@ -23,7 +23,63 @@ class Component {
         this.Element.attr('data-component-id', this.ComponentId)
         $(this.ParentDiv).append(this.Element)
 
-        this.Element.on('click', function () { })
+        setTimeout(function () { _this.#setupEvents() }, 10)
+    }
+
+    #setupEvents() {
+        let _this = this
+
+        this.Element.on('click', function (e) {
+            e.preventDefault()
+
+            let otherComponentElems = $(`.Component`), elem = $(this)
+
+            otherComponentElems.removeClass('Editable')
+            elem.addClass('Editable')
+        })
+
+        let isDragging = false, offsetX, offsetY
+
+        this.Element.on('mousedown', function (e) {
+            isDragging = true
+
+            const rect = this.getBoundingClientRect(),
+                scale = _this.#getCurrentScale()
+
+            offsetX = (e.clientX - rect.left) / scale;
+            offsetY = (e.clientY - rect.top) / scale;
+
+            _this.Element.css({ opacity: '0.8', 'box-shadow': '0 0 10px rgba(0,0,0,0.5)' })
+
+            e.preventDefault()
+        })
+
+        this.ParentDiv.addEventListener('mousemove', (e) => {
+            if (!isDragging) {
+                return
+            }
+
+            const scale = _this.#getCurrentScale(),
+                left = ((e.clientX - offsetX) * (scale + window.scrollX)) / scale,
+                top = ((e.clientY - offsetY) * (scale + window.scrollY)) / scale
+
+
+            _this.setPosition(left, top)
+        })
+
+        this.ParentDiv.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false
+                _this.Element.css({ opacity: '1', 'box-shadow': 'none' })
+            }
+        })
+    }
+
+    #getCurrentScale() {
+        const transform = window.getComputedStyle(this.ParentDiv).transform
+        if (transform === 'none') { return 1 }
+        const matrix = transform.match(/^matrix\((.+)\)$/)
+        return matrix ? parseFloat(matrix[1].split(', ')[0]) : 1
     }
 
     setPosition(left, top) {

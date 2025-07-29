@@ -25,27 +25,27 @@ function addComponentToPage(componentType, left, top) {
     let newComponent
     switch (componentType) {
         case 'Component_3D':
-            newComponent = new Component_3D(document.getElementById('Page'), 100, 40, left, top)
+            newComponent = new Component_3D('Page', 100, 40, left, top)
             break
 
         case 'Component_Button':
-            newComponent = new Component_Button(document.getElementById('Page'), 100, 40, left, top)
+            newComponent = new Component_Button('Page', 100, 40, left, top)
             break
 
         case 'Component_Image':
-            newComponent = new Component_Image(document.getElementById('Page'), 100, 40, left, top)
+            newComponent = new Component_Image('Page', 100, 40, left, top)
             break
 
         case 'Component_Link':
-            newComponent = new Component_Link(document.getElementById('Page'), 100, 40, left, top)
+            newComponent = new Component_Link('Page', 100, 40, left, top)
             break
 
         case 'Component_Text':
-            newComponent = new Component_Text(document.getElementById('Page'), 100, 40, left, top)
+            newComponent = new Component_Text('Page', 100, 40, left, top)
             break
 
         case 'Component_Video':
-            newComponent = new Component_Video(document.getElementById('Page'), 100, 40, left, top)
+            newComponent = new Component_Video('Page', 100, 40, left, top)
             break
     }
 
@@ -68,7 +68,7 @@ function setupComponentAdderButtons() {
     })
 }
 
-let zoomLevel = 1 // مقدار اولیه زوم
+let zoomLevel = 1
 const zoomSpeed = 0.1
 document.addEventListener('wheel', function (e) {
     if (e.ctrlKey) {
@@ -80,9 +80,9 @@ document.addEventListener('wheel', function (e) {
             zoomLevel -= zoomSpeed
         }
 
-        zoomLevel = Math.min(Math.max(zoomLevel, 0.2), 1) // بین 0.5 تا 3
+        zoomLevel = Math.min(Math.max(zoomLevel, 0.2), 1)
 
-        const target = document.getElementById('EditorArea')
+        const target = document.getElementById('Page')
         if (target) {
             target.style.transform = `scale(${zoomLevel})`
             target.style.transformOrigin = 'center center'
