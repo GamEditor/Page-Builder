@@ -64,6 +64,10 @@
     width: 10%;
 }
 
+.w90 {
+    width: 90%;
+}
+
 .flexCenter,
 .flexFullCenter {
     display: flex;

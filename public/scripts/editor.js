@@ -20,32 +20,32 @@ function uploadToServer() {
     xhr.send(formData)
 }
 
-function addComponentToPage(componentType, left, top) {
-    console.log({ left, top })
+function addComponentToPage(ComponentType, Left, Top) {
+    console.log({ Left, Top })
     let newComponent
-    switch (componentType) {
+    switch (ComponentType) {
         case 'Component_3D':
-            newComponent = new Component_3D('Page', 100, 40, left, top)
+            newComponent = new Component_3D('Page', { Width: 100, Height: 40, Left, Top })
             break
 
         case 'Component_Button':
-            newComponent = new Component_Button('Page', 100, 40, left, top)
+            newComponent = new Component_Button('Page', { Width: 100, Height: 40, Left, Top })
             break
 
         case 'Component_Image':
-            newComponent = new Component_Image('Page', 100, 40, left, top)
+            newComponent = new Component_Image('Page', { Width: 640, Height: 427, Left, Top })
             break
 
         case 'Component_Link':
-            newComponent = new Component_Link('Page', 100, 40, left, top)
+            newComponent = new Component_Link('Page', { Width: 100, Height: 40, Left, Top })
             break
 
         case 'Component_Text':
-            newComponent = new Component_Text('Page', 100, 40, left, top)
+            newComponent = new Component_Text('Page', { Width: 100, Height: 40, Left, Top })
             break
 
         case 'Component_Video':
-            newComponent = new Component_Video('Page', 100, 40, left, top)
+            newComponent = new Component_Video('Page', { Width: 100, Height: 40, Left, Top })
             break
     }
 
@@ -60,6 +60,8 @@ function setupComponentAdderButtons() {
             $('#Page').addClass('addingNewComponent')
             $('#Page.addingNewComponent').one('click', function (e) {
                 console.log(e)
+                ///////// fix this part
+                ///////// bug: when i click on another component, the new component offsetX and offsetY are calculated due to e.target (component)
 
                 $(this).removeClass('addingNewComponent')
                 addComponentToPage(componentType, e.offsetX, e.offsetY)
@@ -95,12 +97,12 @@ $(function (e) {
 
     let componentsAdderElements =
         `
-        <div class="ComponentAdder cupo pd4-10" data-type="${Component_3D.name}">${Component_3D.getType()}</div>
-        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Button.name}">${Component_Button.getType()}</div>
-        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Image.name}">${Component_Image.getType()}</div>
-        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Link.name}">${Component_Link.getType()}</div>
-        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Text.name}">${Component_Text.getType()}</div>
-        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Video.name}">${Component_Video.getType()}</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="${Component_3D.name}">3D Model</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Button.name}">Button</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Image.name}">Image</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Link.name}">Link</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Text.name}">Text</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Video.name}">Video</div>
         `
     $('#ComponentsAdderComponentsContainer').html(componentsAdderElements)
     setupComponentAdderButtons()
@@ -110,7 +112,60 @@ $(function (e) {
         height: PROJECT_DATA.Page.Height * 2,
         direction: PROJECT_DATA.Page.Direction,
         'background-color': PROJECT_DATA.Page.BackgroundColor,
-        // transform: 'scale(0.4)',
     })
     $('#Viewport').css({ width: PROJECT_DATA.Page.Width, height: PROJECT_DATA.Page.Height })
+
+    const page = document.getElementById('Page')
+    let isDragging = false
+    let startX = 0, startY = 0
+    let origLeft = 0, origTop = 0
+
+    window.addEventListener('contextmenu', function (e) {
+        e.preventDefault()
+    })
+
+    page.addEventListener('click', function (e) {
+        console.log(!$(e.target).hasClass('Component'))
+
+        if (!$(e.target).hasClass('Component')) {
+            for (let i = 0; i < PROJECT_DATA.Components.length; i++) {
+                PROJECT_DATA.Components[i].setEnableEditMode(false)
+            }
+        }
+    })
+
+    page.addEventListener('contextmenu', function (e) {
+        e.preventDefault()
+    })
+
+    page.addEventListener('mousedown', function (e) {
+        if (e.button !== 2) return // فقط کلیک راست
+        e.preventDefault()
+
+        isDragging = true
+        startX = e.clientX
+        startY = e.clientY
+
+        origLeft = parseInt(window.getComputedStyle(page).left, 10)
+        origTop = parseInt(window.getComputedStyle(page).top, 10)
+
+        page.style.cursor = 'grabbing'
+    })
+
+    window.addEventListener('mousemove', function (e) {
+        if (!isDragging) return
+
+        const dx = e.clientX - startX
+        const dy = e.clientY - startY
+
+        page.style.left = `${origLeft + dx}px`
+        page.style.top = `${origTop + dy}px`
+    })
+
+    window.addEventListener('mouseup', function (e) {
+        if (isDragging && e.button === 2) {
+            isDragging = false
+            page.style.cursor = ''
+        }
+    })
 })

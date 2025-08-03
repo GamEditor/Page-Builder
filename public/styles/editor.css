@@ -1,6 +1,14 @@
+:root {
+    --header-bg-color: #f0f0f0;
+}
+
 body {
     background-color: #f5f5f5;
     font-family: Arial, sans-serif;
+}
+
+.header {
+    background-color: var(--header-bg-color);
 }
 
 #EditorContainer {
@@ -38,6 +46,120 @@ body {
 
 #Timeline.open {
     height: 25dvh;
+}
+
+#PageScrollYEditor {
+    height: calc(100% - 35px);
+}
+
+#PageScrollYEditorAnimatedComponents {
+    padding: 10px;
+    height: calc(100% - 20px);
+}
+
+#PageScrollYEditorTimeline {
+    flex-grow: 1;
+    background-color: #f9f9f9;
+    position: relative;
+    overflow: auto;
+    height: 100%;
+}
+
+#PageScrollYEditorTitleAndDescription {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#TimelineHeader button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+#TimelineHeader button:hover {
+    background-color: #eee;
+}
+
+#TimelineHeader button img {
+    width: 16px;
+    height: 16px;
+}
+
+#PageScrollYEditorAnimatedComponents {
+    padding: 10px;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+#PageScrollYEditorAnimatedComponents .AnimationComponent {
+    padding: 5px;
+    margin: 3px 0;
+    background-color: #e9e9e9;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+#PageScrollYEditorTimeline {
+    flex-grow: 1;
+    background-color: #f9f9f9;
+    position: relative;
+    overflow: auto;
+}
+
+#TimelineRuler {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: flex-end;
+    z-index: 5;
+}
+
+#TimelineGrid {
+    position: absolute;
+    top: 30px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(to right,
+            #eee,
+            #eee 1px,
+            transparent 1px,
+            transparent calc(100% / var(--zoom-level, 10)));
+    transform-origin: 0 0;
+    transform: scaleX(var(--zoom-level, 1));
+    width: calc(100% / var(--zoom-level, 1));
+}
+
+#TimelineIndicator {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: red;
+    left: 0;
+    z-index: 10;
+}
+
+.TimelineKeyframe {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    cursor: pointer;
 }
 
 #EditorArea {
@@ -88,4 +210,15 @@ body {
     -ms-user-select: none;
     -moz-user-select: none;
     -webkit-user-select: none;
+}
+
+.resize-handle {
+    width: 10px;
+    height: 10px;
+    background: #555;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    cursor: nwse-resize;
+    z-index: 10;
 }
