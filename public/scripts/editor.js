@@ -20,6 +20,10 @@ function uploadToServer() {
     xhr.send(formData)
 }
 
+function saveEditorChanges() {
+    console.log('saved in server')
+}
+
 function addComponentToPage(ComponentType, Left, Top) {
     console.log({ Left, Top })
     let newComponent
@@ -115,10 +119,12 @@ $(function (e) {
     })
     $('#Viewport').css({ width: PROJECT_DATA.Page.Width, height: PROJECT_DATA.Page.Height })
 
+    $('#btnSaveEditorChanges').on('click', function (e) { saveEditorChanges() })
+
     const page = document.getElementById('Page')
-    let isDragging = false
-    let startX = 0, startY = 0
-    let origLeft = 0, origTop = 0
+    let isDragging = false,
+        startX = 0, startY = 0,
+        origLeft = 0, origTop = 0
 
     window.addEventListener('contextmenu', function (e) {
         e.preventDefault()

@@ -25,11 +25,44 @@ body {
 #ComponentsAdder,
 #Timeline,
 #ComponentsTree,
-#ComponentsProperties {
+#ComponentsProperties,
+#ToolBar {
     background-color: white;
     border-radius: 4px;
     z-index: 100000;
     box-shadow: 0 0 10px #00000099;
+}
+
+#ToolBar {
+    width: calc(14dvw - 20px);
+    height: 40px;
+    background-color: white;
+    right: 1dvw;
+    top: 3dvh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 10px;
+}
+
+#ToolBar .btn {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    background-color: #c5c5c5;
+    background-position: center;
+    background-size: 70%;
+    background-repeat: no-repeat;
+    border-radius: 6px;
+    transition: all 0.15s;
+}
+
+#ToolBar .btn:hover {
+    background-size: 80%;
+}
+
+#ToolBar #btnSaveEditorChanges.btn {
+    background-image: url('/images/save.svg');
 }
 
 #ComponentsAdder {
@@ -178,9 +211,9 @@ body {
 }
 
 #ComponentsTree {
-    height: 50dvh;
+    height: calc(50dvh - 60px);
     right: 1dvw;
-    top: 3dvh;
+    top: calc(3dvh + 60px);
 }
 
 #ComponentsAdder.open,
