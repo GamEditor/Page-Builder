@@ -21,39 +21,76 @@ function uploadToServer() {
 }
 
 function saveEditorChanges() {
-    console.log('saved in server')
+    let Components = PROJECT_DATA.Components,
+        SaveStateOfComponents = []
+    for (let i = 0; i < Components.length; i++) {
+        try { SaveStateOfComponents.push(Components[i].getSaveState()) } catch (e) { console.log(e) }
+    }
+
+    sendJsonRequest(`/api/saveProject/${PROJECT_ID}`, { Components: SaveStateOfComponents, Page: PROJECT_DATA.Page, ModificationDate: new Date().valueOf() }, function (err, data) {
+        console.log({ err, data })
+    })
 }
 
 function addComponentToPage(ComponentType, Left, Top) {
-    console.log({ Left, Top })
-    let newComponent
     switch (ComponentType) {
-        case 'Component_3D':
-            newComponent = new Component_3D('Page', { Width: 100, Height: 40, Left, Top })
+        case '3D Object':
+            PROJECT_DATA.Components.push(new Component_3D('Page', { Width: 100, Height: 40, Left, Top }))
             break
 
-        case 'Component_Button':
-            newComponent = new Component_Button('Page', { Width: 100, Height: 40, Left, Top })
+        case 'Button':
+            PROJECT_DATA.Components.push(new Component_Button('Page', { Width: 100, Height: 40, Left, Top }))
             break
 
-        case 'Component_Image':
-            newComponent = new Component_Image('Page', { Width: 640, Height: 427, Left, Top })
+        case 'Image':
+            PROJECT_DATA.Components.push(new Component_Image('Page', { Width: 640, Height: 427, Left, Top }))
             break
 
-        case 'Component_Link':
-            newComponent = new Component_Link('Page', { Width: 100, Height: 40, Left, Top })
+        case 'Link':
+            PROJECT_DATA.Components.push(new Component_Link('Page', { Width: 100, Height: 40, Left, Top }))
             break
 
-        case 'Component_Text':
-            newComponent = new Component_Text('Page', { Width: 100, Height: 40, Left, Top })
+        case 'Text':
+            PROJECT_DATA.Components.push(new Component_Text('Page', { Width: 100, Height: 40, Left, Top }))
             break
 
-        case 'Component_Video':
-            newComponent = new Component_Video('Page', { Width: 100, Height: 40, Left, Top })
+        case 'Video':
+            PROJECT_DATA.Components.push(new Component_Video('Page', { Width: 100, Height: 40, Left, Top }))
             break
     }
+}
 
-    PROJECT_DATA.Components.push(newComponent)
+function loadSavedPage() {
+    let Components = PROJECT_DATA.Components
+    PROJECT_DATA.Components = []
+
+    for (let i = 0; i < Components.length; i++) {
+        switch (Components[i].Type) {
+            case '3D Object':
+                PROJECT_DATA.Components.push(new Component_3D(Components[i].ParentDiv, Components[i]))
+                break
+
+            case 'Button':
+                PROJECT_DATA.Components.push(new Component_Button(Components[i].ParentDiv, Components[i]))
+                break
+
+            case 'Image':
+                PROJECT_DATA.Components.push(new Component_Image(Components[i].ParentDiv, Components[i]))
+                break
+
+            case 'Link':
+                PROJECT_DATA.Components.push(new Component_Link(Components[i].ParentDiv, Components[i]))
+                break
+
+            case 'Text':
+                PROJECT_DATA.Components.push(new Component_Text(Components[i].ParentDiv, Components[i]))
+                break
+
+            case 'Video':
+                PROJECT_DATA.Components.push(new Component_Video(Components[i].ParentDiv, Components[i]))
+                break
+        }
+    }
 }
 
 let isAddingComponent = false
@@ -101,12 +138,12 @@ $(function (e) {
 
     let componentsAdderElements =
         `
-        <div class="ComponentAdder cupo pd4-10" data-type="${Component_3D.name}">3D Model</div>
-        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Button.name}">Button</div>
-        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Image.name}">Image</div>
-        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Link.name}">Link</div>
-        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Text.name}">Text</div>
-        <div class="ComponentAdder cupo pd4-10" data-type="${Component_Video.name}">Video</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="3D Object">3D Model</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="Button">Button</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="Image">Image</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="Link">Link</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="Text">Text</div>
+        <div class="ComponentAdder cupo pd4-10" data-type="Video">Video</div>
         `
     $('#ComponentsAdderComponentsContainer').html(componentsAdderElements)
     setupComponentAdderButtons()
@@ -174,4 +211,6 @@ $(function (e) {
             page.style.cursor = ''
         }
     })
+
+    loadSavedPage()
 })

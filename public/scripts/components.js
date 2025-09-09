@@ -17,10 +17,11 @@ class ComponentSaveState {
 
     /**
      * 
-     * @param {{Type:String, ComponentId:Number, Width:Number, Height:Number, Left:Number, Top:Number, Src:String, Href:String, Tooltip:String, ModelUrl:String, Value:String, InnerText:String, ZIndex:Number}} stateObject 
+     * @param {{Type:String, ParentDiv:String, ComponentId:Number, Width:Number, Height:Number, Left:Number, Top:Number, Src:String, Href:String, Tooltip:String, ModelUrl:String, Value:String, InnerText:String, ZIndex:Number}} stateObject 
      */
     constructor(stateObject) {
         this.Type = stateObject.Type
+        this.ParentDiv = stateObject.ParentDiv
         this.ComponentId = stateObject.ComponentId
         this.Width = stateObject.Width
         this.Height = stateObject.Height
@@ -244,6 +245,7 @@ class Component_3D extends Component {
     getSaveState() {
         return new ComponentSaveState({
             Type: this.Type,
+            ParentDiv: this.ParentDiv.id,
             ComponentId: this.ComponentId,
             Width: this.Width,
             Height: this.Height,
@@ -277,6 +279,7 @@ class Component_Button extends Component {
     getSaveState() {
         return new ComponentSaveState({
             Type: this.Type,
+            ParentDiv: this.ParentDiv.id,
             ComponentId: this.ComponentId,
             Width: this.Width,
             Height: this.Height,
@@ -310,6 +313,7 @@ class Component_Image extends Component {
     getSaveState() {
         return new ComponentSaveState({
             Type: this.Type,
+            ParentDiv: this.ParentDiv.id,
             ComponentId: this.ComponentId,
             Width: this.Width,
             Height: this.Height,
@@ -351,6 +355,7 @@ class Component_Link extends Component {
     getSaveState() {
         return new ComponentSaveState({
             Type: this.Type,
+            ParentDiv: this.ParentDiv.id,
             ComponentId: this.ComponentId,
             Width: this.Width,
             Height: this.Height,
@@ -386,6 +391,7 @@ class Component_Text extends Component {
     getSaveState() {
         return new ComponentSaveState({
             Type: this.Type,
+            ParentDiv: this.ParentDiv.id,
             ComponentId: this.ComponentId,
             Width: this.Width,
             Height: this.Height,
@@ -419,6 +425,7 @@ class Component_Video extends Component {
     getSaveState() {
         return new ComponentSaveState({
             Type: this.Type,
+            ParentDiv: this.ParentDiv.id,
             ComponentId: this.ComponentId,
             Width: this.Width,
             Height: this.Height,

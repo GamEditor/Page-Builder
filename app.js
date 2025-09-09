@@ -8,8 +8,8 @@ const express = require('express'),
     PORT = process.env.PORT || 8080,
     path = require('path');
 
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 app.use(express.static(path.resolve('./public')));
 
 const views = {
@@ -58,14 +58,32 @@ function fetchProjectsList(cb) {
     })
 }
 
-function updateProjects(newData, cb) {
+function updateProjectsList(newData, cb) {
     fs.writeFile('./allProjects.json', JSON.stringify(newData), { encoding: 'utf-8' }, function (err) {
         if (err) {
             if (cb) {
-                cb(200);
+                cb(500);
             }
         } else {
             if (cb) {
+                cb(200);
+            }
+        }
+    });
+}
+
+/**
+ * 
+ * @param {Number} projectId 
+ * @param {Object} projectObject 
+ * @param {function(Number): void} cb 
+ */
+function updateProjectSaveState(projectId, projectObject, cb) {
+    fs.writeFile(`${projectsFolder}/${projectId}/config.json`, JSON.stringify(projectObject), function (err) {
+        if (!err) {
+            if (cb) {
+                cb(200);
+            } else {
                 cb(500);
             }
         }
@@ -87,7 +105,7 @@ function createNewProject(req, cb) {
                     ModificationDate: now,
                 });
 
-                updateProjects(allProjects, function (statusCode) {
+                updateProjectsList(allProjects, function (statusCode) {
                     if (statusCode != 200) {
                         console.log('Unable to update projects (create)');
                     }
@@ -97,19 +115,15 @@ function createNewProject(req, cb) {
 
         fs.mkdir(`${projectsFolder}/${projectId}`, function (err) {
             if (!err) {
-                let now = new Date().valueOf(),
-                    projectObject = {
-                        ProjectName: req.body.Name,
-                        CreationDate: now,
-                        ModificationDate: now,
-                        Page: {
-                            Width: req.body.Width ? req.body.Width : '1920px',
-                            Height: req.body.Height ? req.body.Height : '1080px',
-                            BackgroundColor: req.body.BackgroundColor ? req.body.BackgroundColor : '#ffffff',
-                            Direction: req.body.Direction && (req.body.Direction.toLowerCase() == 'rtl' || req.body.Direction.toLowerCase() == 'ltr') ? req.body.Direction.toLowerCase() : 'rtl',
-                        },
-                        Components: []
-                    }
+                let projectObject = {
+                    Page: {
+                        Width: req.body.Width ? req.body.Width : '1920px',
+                        Height: req.body.Height ? req.body.Height : '1080px',
+                        BackgroundColor: req.body.BackgroundColor ? req.body.BackgroundColor : '#ffffff',
+                        Direction: req.body.Direction && (req.body.Direction.toLowerCase() == 'rtl' || req.body.Direction.toLowerCase() == 'ltr') ? req.body.Direction.toLowerCase() : 'rtl',
+                    },
+                    Components: []
+                }
 
                 fs.writeFile(`${projectsFolder}/${projectId}/config.json`, JSON.stringify(projectObject), function (err) {
                     if (!err) {
@@ -118,7 +132,6 @@ function createNewProject(req, cb) {
                         }
                     }
                 });
-
             }
         });
     } else {
@@ -147,7 +160,7 @@ function deleteProject(projectId, cb) {
                         }
                     }
 
-                    updateProjects(allProjects, function (statusCode) {
+                    updateProjectsList(allProjects, function (statusCode) {
                         if (statusCode != 200) {
                             console.log('Unable to update projects (delete)');
                         }
@@ -214,9 +227,9 @@ function runApp() {
     checkForProjectDependencies();
 
     app.get('/', function (req, res) {
-        fetchProjectsList(function (statusCode, projects) {
+        fetchProjectsList(function (statusCode, allProjects) {
             if (statusCode == 200) {
-                res.send(ejs.render(views.index, { global_header: views.global_header, projects: JSON.stringify(projects.projects) }));
+                res.send(ejs.render(views.index, { global_header: views.global_header, projects: JSON.stringify(allProjects.projects) }));
             } else {
                 res.send(ejs.render(views.index, { global_header: views.global_header, projects: [] }));
             }
@@ -262,7 +275,33 @@ function runApp() {
     });
 
     app.post('/api/saveProject/:projectId', function (req, res) {
-        res.send('not implemented!');
+        console.log(req.body)
+        fetchProjectsList(function (statusCode, allProjects) {
+            if (statusCode == 200) {
+                for (let i = 0; i < allProjects.projects.length; i++) {
+                    if (allProjects.projects[i].Id == req.params.projectId) {
+                        allProjects.projects[i].ModificationDate = Number(req.body.ModificationDate);
+                        break;
+                    }
+                }
+                updateProjectsList(allProjects, function (statusCode) {
+                    if (statusCode != 200) {
+                        res.status(statusCode).send(`Unable to update projects (/api/saveProject/${req.params.projectId})`);
+                    } else {
+                        let saveStateData = { Page: req.body.Page, Components: req.body.Components };
+                        updateProjectSaveState(req.params.projectId, saveStateData, function (statusCode) {
+                            if (statusCode != 200) {
+                                res.status(statusCode).send('Not saved');
+                            } else {
+                                res.send('Saved');
+                            }
+                        })
+                    }
+                });
+            } else {
+                res.status(statusCode).send(`Unable to fetch project`);
+            }
+        });
     });
 
     const storage = multer.diskStorage({

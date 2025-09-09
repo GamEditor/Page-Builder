@@ -1,12 +1,25 @@
-function sendWebRequest(method, url, data, onCompleted) {
+function sendWebRequest(method, url, headers, data, onCompleted) {
     if (method && url) {
         let requestObject = {
             method, url,
+            headers,
             success: function (d) { if (onCompleted) { onCompleted(null, d) } },
             error: function (e) { if (onCompleted) { onCompleted(e, null) } }
         }
         if (method != 'GET') { requestObject.data = data }
         $.ajax(requestObject)
+    }
+}
+function sendJsonRequest(url, data, onCompleted) {
+    if (url) {
+        $.ajax({
+            method: 'POST', url,
+            dataType: 'json',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (d) { if (onCompleted) { onCompleted(null, d) } },
+            error: function (e) { if (onCompleted) { onCompleted(e, null) } }
+        })
     }
 }
 function getPadNumber(number, maxLength, fillString) { return `${number}`.padStart(maxLength, fillString) }

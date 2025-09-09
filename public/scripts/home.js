@@ -1,7 +1,7 @@
 function openProject(mode, id) { window.open(`/app/${mode}/${id}`, '_self') }
-function deleteProject(id) { if (confirm('آیا مطمئن هستید؟')) { sendWebRequest('POST', `/api/deleteProject/${id}`, { projectId: id }, function (err, downloadLink) { $(`tr[data-project-id="${id}"]`).remove() }) } }
+function deleteProject(id) { if (confirm('آیا مطمئن هستید؟')) { sendWebRequest('POST', `/api/deleteProject/${id}`, {}, { projectId: id }, function (err, downloadLink) { $(`tr[data-project-id="${id}"]`).remove() }) } }
 function downloadProject(id) {
-    sendWebRequest('POST', `/api/download/${id}`, { projectId: id }, function (err, downloadLink) {
+    sendWebRequest('POST', `/api/download/${id}`, {}, { projectId: id }, function (err, downloadLink) {
         console.log(downloadLink)
     })
 }
@@ -70,7 +70,7 @@ $(function (e) {
             Width: $('#project_Width').val(),
             Height: $('#project_Height').val(),
         }
-        sendWebRequest('POST', '/api/createNewProject', data, function (err, projectId) {
+        sendWebRequest('POST', '/api/createNewProject', {}, data, function (err, projectId) {
             if (!err) {
                 window.open(`/app/editor/${projectId}`, '_self')
             } else {
