@@ -576,11 +576,11 @@ class Component_Video extends Component {
      */
     constructor(stateObject) {
         stateObject.Src = stateObject.Src ? stateObject.Src : '/videos/sample.mp4'
-        stateObject.Controls = stateObject.Controls ? false : true
+        stateObject.Controls = stateObject.Controls ? true : false
         stateObject.InnerText = stateObject.InnerText ? stateObject.InnerText : 'مرورگر شما از ویدئو پشتیبانی نمی کند'
-        stateObject.Autoplay = stateObject.Autoplay ? false : true
-        stateObject.Loop = stateObject.Loop ? false : true
-        stateObject.Muted = stateObject.Muted ? false : true
+        stateObject.Autoplay = stateObject.Autoplay ? true : false
+        stateObject.Loop = stateObject.Loop ? true : false
+        stateObject.Muted = stateObject.Muted ? true : false
         stateObject.Poster = stateObject.Poster ? stateObject.Poster : ''
 
         stateObject.ElemText = `<video class="Component Component_Video" src="${stateObject.Src}" ${stateObject.Controls ? 'controls' : ''} ${stateObject.Autoplay ? 'autoplay' : ''} ${stateObject.Loop ? 'loop' : ''} ${stateObject.Muted ? 'muted' : ''} poster="${stateObject.Poster}">${stateObject.InnerText}</video>`

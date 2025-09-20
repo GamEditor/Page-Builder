@@ -4,7 +4,7 @@ function sendWebRequest(method, url, headers, data, onCompleted) {
             method, url,
             headers,
             success: function (d) { if (onCompleted) { onCompleted(null, d) } },
-            error: function (e) { if (onCompleted) { onCompleted(e, null) } }
+            error: function (e) { if (onCompleted) { onCompleted(e.responseText, null) } }
         }
         if (method != 'GET') { requestObject.data = data }
         $.ajax(requestObject)
