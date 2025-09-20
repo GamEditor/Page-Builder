@@ -35,27 +35,27 @@ function saveEditorChanges() {
 function addComponentToPage(ComponentType, Left, Top) {
     switch (ComponentType) {
         case '3D Object':
-            PROJECT_DATA.Components.push(new Component_3D('Page', { Width: 100, Height: 40, Left, Top }))
+            PROJECT_DATA.Components.push(new Component_3D({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
             break
 
         case 'Button':
-            PROJECT_DATA.Components.push(new Component_Button('Page', { Width: 100, Height: 40, Left, Top }))
+            PROJECT_DATA.Components.push(new Component_Button({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
             break
 
         case 'Image':
-            PROJECT_DATA.Components.push(new Component_Image('Page', { Width: 640, Height: 427, Left, Top }))
+            PROJECT_DATA.Components.push(new Component_Image({ ParentDiv: 'Page', Width: 640, Height: 427, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
             break
 
         case 'Link':
-            PROJECT_DATA.Components.push(new Component_Link('Page', { Width: 100, Height: 40, Left, Top }))
+            PROJECT_DATA.Components.push(new Component_Link({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
             break
 
         case 'Text':
-            PROJECT_DATA.Components.push(new Component_Text('Page', { Width: 100, Height: 40, Left, Top }))
+            PROJECT_DATA.Components.push(new Component_Text({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
             break
 
         case 'Video':
-            PROJECT_DATA.Components.push(new Component_Video('Page', { Width: 100, Height: 40, Left, Top }))
+            PROJECT_DATA.Components.push(new Component_Video({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
             break
     }
 }
@@ -67,27 +67,27 @@ function loadSavedPage() {
     for (let i = 0; i < Components.length; i++) {
         switch (Components[i].Type) {
             case '3D Object':
-                PROJECT_DATA.Components.push(new Component_3D(Components[i].ParentDiv, Components[i]))
+                PROJECT_DATA.Components.push(new Component_3D(Components[i]))
                 break
 
             case 'Button':
-                PROJECT_DATA.Components.push(new Component_Button(Components[i].ParentDiv, Components[i]))
+                PROJECT_DATA.Components.push(new Component_Button(Components[i]))
                 break
 
             case 'Image':
-                PROJECT_DATA.Components.push(new Component_Image(Components[i].ParentDiv, Components[i]))
+                PROJECT_DATA.Components.push(new Component_Image(Components[i]))
                 break
 
             case 'Link':
-                PROJECT_DATA.Components.push(new Component_Link(Components[i].ParentDiv, Components[i]))
+                PROJECT_DATA.Components.push(new Component_Link(Components[i]))
                 break
 
             case 'Text':
-                PROJECT_DATA.Components.push(new Component_Text(Components[i].ParentDiv, Components[i]))
+                PROJECT_DATA.Components.push(new Component_Text(Components[i]))
                 break
 
             case 'Video':
-                PROJECT_DATA.Components.push(new Component_Video(Components[i].ParentDiv, Components[i]))
+                PROJECT_DATA.Components.push(new Component_Video(Components[i]))
                 break
         }
     }
@@ -145,7 +145,7 @@ $(function (e) {
         <div class="ComponentAdder cupo pd4-10" data-type="Text">Text</div>
         <div class="ComponentAdder cupo pd4-10" data-type="Video">Video</div>
         `
-    $('#ComponentsAdderComponentsContainer').html(componentsAdderElements)
+    $('#ComponentsAdder .container').html(componentsAdderElements)
     setupComponentAdderButtons()
 
     $('#Page').css({

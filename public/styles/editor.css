@@ -228,6 +228,35 @@ body {
     bottom: 3dvh;
 }
 
+#ComponentsProperties .container .property {
+    padding: 4px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+#ComponentsProperties .container .property .key {
+    width: 80px;
+}
+
+#ComponentsProperties .container {
+    height: calc(100% - 27px);
+    overflow: auto;
+}
+
+#ComponentsProperties .container .property .value {
+    width: calc(100% - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+#ComponentsProperties .container .property .value>* {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
 .ComponentAdder {
     transition: all 0.2s;
 }
