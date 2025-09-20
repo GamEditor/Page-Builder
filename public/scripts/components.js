@@ -15,10 +15,15 @@ class ComponentSaveState {
     InnerText = ''
     Direction = ''
     ZIndex = 0
+    Controls = false
+    Autoplay = false
+    Loop = false
+    Muted = false
+    Poster = ''
 
     /**
      * 
-     * @param {{Type:String, ParentDiv:String, ComponentId:Number, Width:Number, Height:Number, Left:Number, Top:Number, Src:String, Href:String, Tooltip:String, ModelUrl:String, Value:String, InnerText:String, Direction:String, ZIndex:Number}} stateObject 
+     * @param {{Type:String, ParentDiv:String, ComponentId:Number, Width:Number, Height:Number, Left:Number, Top:Number, Src:String, Href:String, Tooltip:String, ModelUrl:String, Value:String, InnerText:String, Direction:String, ZIndex:Number, Controls:Boolean, Autoplay:Boolean, Loop:Boolean, Muted:Boolean, Poster:String}} stateObject 
      */
     constructor(stateObject) {
         this.Type = stateObject.Type
@@ -36,6 +41,11 @@ class ComponentSaveState {
         this.InnerText = stateObject.InnerText
         this.Direction = stateObject.Direction
         this.ZIndex = stateObject.ZIndex
+        this.Controls = stateObject.Controls
+        this.Autoplay = stateObject.Autoplay
+        this.Loop = stateObject.Loop
+        this.Muted = stateObject.Muted
+        this.Poster = stateObject.Poster
     }
 }
 
@@ -148,7 +158,7 @@ class Component {
     }
 
     #reloadComponent() {
-        console.log('reload')
+        this.Element.css(this.getStyle())
     }
 
     setPosition(left, top) {
@@ -164,15 +174,6 @@ class Component {
     }
 
     getStyle() {
-        console.log({
-            left: `${this.Left}px`,
-            top: `${this.Top}px`,
-            width: `${this.Width}px`,
-            height: `${this.Height}px`,
-            direction: this.Direction,
-            'z-index': this.ZIndex
-        })
-
         return {
             left: `${this.Left}px`,
             top: `${this.Top}px`,
@@ -183,10 +184,6 @@ class Component {
         }
     }
 
-    /**
-     * 
-     * @returns C
-     */
     getComponentProperties() {
         return {
             Type: { Type: 'NoEdit', Value: this.Type },
@@ -207,9 +204,8 @@ class Component {
     #showProperties(ComponentId) {
         let _this = this, propertyElems = '', getPropertyInput = function (key, value) {
             switch (value.Type) {
-                case 'NoEdit':
-                    return `<div data-type="${value.Type}">${value.Value}</div>`
-
+                case 'NoEdit': return `<div data-type="${value.Type}">${value.Value}</div>`
+                case 'Boolean': return `<input data-type="${value.Type}" data-key="${key}" type="checkbox" ${value.Value ? 'checked' : ''}>`
                 case 'Choice':
                     let choiceElems = `<select data-type="${value.Type}" data-key="${key}">`
                     for (let i = 0; i < value.Values.length; i++) {
@@ -217,13 +213,8 @@ class Component {
                     }
                     choiceElems += `</select>`
                     return choiceElems
-
-                case 'String':
-                    return `<input data-type="${value.Type}" data-key="${key}" type="text" value="${value.Value}">`
-
-                case 'Number':
-                    return `<input data-type="${value.Type}" data-key="${key}" type="number" value="${value.Value}">`
-
+                case 'String': return `<input data-type="${value.Type}" data-key="${key}" type="text" value="${value.Value}">`
+                case 'Number': return `<input data-type="${value.Type}" data-key="${key}" type="number" value="${value.Value}">`
                 default: return 'Not Supported Type!'
             }
         }
@@ -235,9 +226,15 @@ class Component {
                 </div>`
         }
         $('#ComponentsProperties .container').html(propertyElems)
-        $(`.property[data-component-id="${ComponentId}"] .value>input,.property[data-component-id="${ComponentId}"] .value>select`).on('change', function (e) {
+        $(`.property[data-component-id="${ComponentId}"] .value>input:not([type="checkbox"]),.property[data-component-id="${ComponentId}"] .value>select`).on('change', function (e) {
             let input = $(this)
             _this.setValue(input.attr('data-key'), input.val())
+        })
+        $(`.property[data-component-id="${ComponentId}"] .value>input[type="checkbox"]`).on('change', function (e) {
+            let input = $(this)
+            console.log({ key: input.attr('data-key'), checked: input.is(':checked') })
+
+            _this.setValue(input.attr('data-key'), input.is(':checked'))
         })
     }
 
@@ -331,6 +328,15 @@ class Component_3D extends Component {
             ModelUrl: { Type: 'String', Value: this.ModelUrl }
         }
     }
+
+    setValue(key, value) {
+        super.setValue(key, value)
+        switch (key) {
+            case 'ModelUrl':
+                // do required job for 3D models
+                break
+        }
+    }
 }
 
 class Component_Button extends Component {
@@ -375,6 +381,13 @@ class Component_Button extends Component {
             Value: { Type: 'String', Value: this.Value }
         }
     }
+
+    setValue(key, value) {
+        super.setValue(key, value)
+        switch (key) {
+            case 'Value': this.Element.val(value); break
+        }
+    }
 }
 
 class Component_Image extends Component {
@@ -386,7 +399,7 @@ class Component_Image extends Component {
      * @param {ComponentSaveState} stateObject 
      */
     constructor(stateObject) {
-        stateObject.Src = stateObject.Src ? stateObject.Src : '/images/demoimg.jpg'
+        stateObject.Src = stateObject.Src ? stateObject.Src : '/images/sample.jpg'
         stateObject.Alt = stateObject.Alt ? stateObject.Alt : 'تصویر'
         stateObject.ElemText = `<img class="Component Component_Image" src="${stateObject.Src}">`
         super(stateObject)
@@ -406,7 +419,8 @@ class Component_Image extends Component {
             Top: this.Top,
             Direction: this.Direction,
             ZIndex: this.ZIndex,
-            Src: this.Src
+            Src: this.Src,
+            Alt: this.Alt
         })
     }
 
@@ -419,7 +433,16 @@ class Component_Image extends Component {
             Top: { Type: 'Number', Value: this.Top },
             Direction: { Type: 'Choice', Value: this.Direction, Values: [{ Value: 'ltr', Text: 'ltr' }, { Value: 'rtl', Text: 'rtl' }] },
             ZIndex: { Type: 'Number', Value: this.ZIndex },
-            Src: { Type: 'String', Value: this.Src }
+            Src: { Type: 'String', Value: this.Src },
+            Alt: { Type: 'String', Value: this.Alt }
+        }
+    }
+
+    setValue(key, value) {
+        super.setValue(key, value)
+        switch (key) {
+            case 'Src': this.Element.attr('src', value); break
+            case 'Alt': this.Element.attr('alt', value); break
         }
     }
 }
@@ -476,6 +499,15 @@ class Component_Link extends Component {
             InnerText: { Type: 'String', Value: this.InnerText }
         }
     }
+
+    setValue(key, value) {
+        super.setValue(key, value)
+        switch (key) {
+            case 'Href': this.Element.attr('href', value); break
+            case 'Tooltip': this.Element.attr('title', value); break
+            case 'InnerText': this.Element.html(value); break
+        }
+    }
 }
 
 class Component_Text extends Component {
@@ -520,20 +552,46 @@ class Component_Text extends Component {
             InnerText: { Type: 'String', Value: this.InnerText }
         }
     }
+
+    setValue(key, value) {
+        super.setValue(key, value)
+        switch (key) {
+            case 'InnerText': this.Element.html(value); break
+        }
+    }
 }
 
 class Component_Video extends Component {
     Src = ''
+    Controls = false
+    InnerText = ''
+    Autoplay = false
+    Loop = false
+    Muted = false
+    Poster = ''
 
     /**
      * 
      * @param {ComponentSaveState} stateObject 
      */
     constructor(stateObject) {
-        stateObject.Src = stateObject.Src ? stateObject.Src : ''
-        stateObject.ElemText = `<video class="Component Component_Video" src="${stateObject.Src}"></video>`
+        stateObject.Src = stateObject.Src ? stateObject.Src : '/videos/sample.mp4'
+        stateObject.Controls = stateObject.Controls ? false : true
+        stateObject.InnerText = stateObject.InnerText ? stateObject.InnerText : 'مرورگر شما از ویدئو پشتیبانی نمی کند'
+        stateObject.Autoplay = stateObject.Autoplay ? false : true
+        stateObject.Loop = stateObject.Loop ? false : true
+        stateObject.Muted = stateObject.Muted ? false : true
+        stateObject.Poster = stateObject.Poster ? stateObject.Poster : ''
+
+        stateObject.ElemText = `<video class="Component Component_Video" src="${stateObject.Src}" ${stateObject.Controls ? 'controls' : ''} ${stateObject.Autoplay ? 'autoplay' : ''} ${stateObject.Loop ? 'loop' : ''} ${stateObject.Muted ? 'muted' : ''} poster="${stateObject.Poster}">${stateObject.InnerText}</video>`
         super(stateObject)
         this.Src = stateObject.Src
+        this.Controls = stateObject.Controls
+        this.InnerText = stateObject.InnerText
+        this.Autoplay = stateObject.Autoplay
+        this.Loop = stateObject.Loop
+        this.Muted = stateObject.Muted
+        this.Poster = stateObject.Poster
         this.Type = 'Video'
     }
 
@@ -547,7 +605,13 @@ class Component_Video extends Component {
             Left: this.Left,
             Top: this.Top,
             ZIndex: this.ZIndex,
-            Src: this.Src
+            Src: this.Src,
+            Controls: this.Controls,
+            InnerText: this.InnerText,
+            Autoplay: this.Autoplay,
+            Loop: this.Loop,
+            Muted: this.Muted,
+            Poster: this.Poster,
         })
     }
 
@@ -559,7 +623,26 @@ class Component_Video extends Component {
             Left: { Type: 'Number', Value: this.Left },
             Top: { Type: 'Number', Value: this.Top },
             ZIndex: { Type: 'Number', Value: this.ZIndex },
-            Src: { Type: 'String', Value: this.Src }
+            Src: { Type: 'String', Value: this.Src },
+            Controls: { Type: 'Boolean', Value: this.Controls },
+            InnerText: { Type: 'String', Value: this.InnerText },
+            Autoplay: { Type: 'Boolean', Value: this.Autoplay },
+            Loop: { Type: 'Boolean', Value: this.Loop },
+            Muted: { Type: 'Boolean', Value: this.Muted },
+            Poster: { Type: 'String', Value: this.Poster }
+        }
+    }
+
+    setValue(key, value) {
+        super.setValue(key, value)
+        switch (key) {
+            case 'Src': this.Element.attr('src', value); break
+            case 'Controls': this.Element.prop('controls', value); break
+            case 'InnerText': this.Element.html(value); break
+            case 'Autoplay': this.Element.prop('autoplay', value); break
+            case 'Loop': this.Element.prop('loop', value); break
+            case 'Muted': this.Element.prop('muted', value); break
+            case 'Poster': this.Element.attr('poster', value); break
         }
     }
 }

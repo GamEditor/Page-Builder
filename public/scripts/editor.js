@@ -55,7 +55,7 @@ function addComponentToPage(ComponentType, Left, Top) {
             break
 
         case 'Video':
-            PROJECT_DATA.Components.push(new Component_Video({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
+            PROJECT_DATA.Components.push(new Component_Video({ ParentDiv: 'Page', Width: 600, Height: 400, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
             break
     }
 }
