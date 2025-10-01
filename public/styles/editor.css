@@ -55,6 +55,7 @@ body {
     background-repeat: no-repeat;
     border-radius: 6px;
     transition: all 0.15s;
+    margin-right: 6px;
 }
 
 #ToolBar .btn:hover {
@@ -63,6 +64,10 @@ body {
 
 #ToolBar #btnSaveEditorChanges.btn {
     background-image: url('/images/save.svg');
+}
+
+#ToolBar #btnProjectSettings.btn {
+    background-image: url('/images/project-settings.svg');
 }
 
 #ComponentsAdder {
@@ -214,6 +219,29 @@ body {
     height: calc(50dvh - 60px);
     right: 1dvw;
     top: calc(3dvh + 60px);
+}
+
+#ComponentsTree .ComponentOnTree {
+    padding: 10px;
+    position: relative;
+}
+
+#ComponentsTree .ComponentOnTree.selected {
+    background-color: #00e3ff33;
+}
+
+#ComponentsTree .ComponentOnTree::before {
+    content: attr(data-name);
+}
+
+#ComponentsTree .ComponentOnTree.selected .delete {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    right: 10px;
+    top: 10px;
+    background-image: url('/images/delete.svg');
+    background-size: contain;
 }
 
 #ComponentsAdder.open,

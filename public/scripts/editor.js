@@ -32,32 +32,45 @@ function saveEditorChanges() {
     })
 }
 
+function updateComponentTreeOnUI() {
+    let cmpElems = ''
+    for (let i = 0; i < PROJECT_DATA.Components.length; i++) {
+        cmpElems +=
+            `<div class="ComponentOnTree" data-component-id="${PROJECT_DATA.Components[i].ComponentId}" data-name="${PROJECT_DATA.Components[i].Name}">
+                <div class="delete cupo" title="حذف کردن"></div>
+            </div>`
+    }
+    $('#ComponentsTree .container').html(cmpElems)
+
+    $('#ComponentsTree .ComponentOnTree').on('click', function (e) {
+        let _this = $(this), ComponentId = _this.attr('data-component-id'), enabledEditMode = true
+        if (_this.hasClass('selected')) {
+            _this.removeClass('selected')
+            enabledEditMode = false
+        } else {
+            _this.addClass('selected')
+            enabledEditMode = true
+        }
+        Component.getComponentById(ComponentId).Element.trigger('click')
+    })
+
+    $('#ComponentsTree .ComponentOnTree .delete').on('click', function (e) {
+        let ComponentId = $(this).parent().attr('data-component-id')
+        Component.removeOmponentById(ComponentId)
+        updateComponentTreeOnUI()
+    })
+}
+
 function addComponentToPage(ComponentType, Left, Top) {
     switch (ComponentType) {
-        case '3D Object':
-            PROJECT_DATA.Components.push(new Component_3D({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
-            break
-
-        case 'Button':
-            PROJECT_DATA.Components.push(new Component_Button({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
-            break
-
-        case 'Image':
-            PROJECT_DATA.Components.push(new Component_Image({ ParentDiv: 'Page', Width: 640, Height: 427, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
-            break
-
-        case 'Link':
-            PROJECT_DATA.Components.push(new Component_Link({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
-            break
-
-        case 'Text':
-            PROJECT_DATA.Components.push(new Component_Text({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
-            break
-
-        case 'Video':
-            PROJECT_DATA.Components.push(new Component_Video({ ParentDiv: 'Page', Width: 600, Height: 400, Left, Top, Direction: PROJECT_DATA.Page.Direction }))
-            break
+        case '3D Object': PROJECT_DATA.Components.push(new Component_3D({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction })); break
+        case 'Button': PROJECT_DATA.Components.push(new Component_Button({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction })); break
+        case 'Image': PROJECT_DATA.Components.push(new Component_Image({ ParentDiv: 'Page', Width: 640, Height: 427, Left, Top, Direction: PROJECT_DATA.Page.Direction })); break
+        case 'Link': PROJECT_DATA.Components.push(new Component_Link({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction })); break
+        case 'Text': PROJECT_DATA.Components.push(new Component_Text({ ParentDiv: 'Page', Width: 100, Height: 40, Left, Top, Direction: PROJECT_DATA.Page.Direction })); break
+        case 'Video': PROJECT_DATA.Components.push(new Component_Video({ ParentDiv: 'Page', Width: 640, Height: 360, Left, Top, Direction: PROJECT_DATA.Page.Direction })); break
     }
+    updateComponentTreeOnUI()
 }
 
 function loadSavedPage() {
@@ -66,37 +79,22 @@ function loadSavedPage() {
 
     for (let i = 0; i < Components.length; i++) {
         switch (Components[i].Type) {
-            case '3D Object':
-                PROJECT_DATA.Components.push(new Component_3D(Components[i]))
-                break
-
-            case 'Button':
-                PROJECT_DATA.Components.push(new Component_Button(Components[i]))
-                break
-
-            case 'Image':
-                PROJECT_DATA.Components.push(new Component_Image(Components[i]))
-                break
-
-            case 'Link':
-                PROJECT_DATA.Components.push(new Component_Link(Components[i]))
-                break
-
-            case 'Text':
-                PROJECT_DATA.Components.push(new Component_Text(Components[i]))
-                break
-
-            case 'Video':
-                PROJECT_DATA.Components.push(new Component_Video(Components[i]))
-                break
+            case '3D Object': PROJECT_DATA.Components.push(new Component_3D(Components[i])); break
+            case 'Button': PROJECT_DATA.Components.push(new Component_Button(Components[i])); break
+            case 'Image': PROJECT_DATA.Components.push(new Component_Image(Components[i])); break
+            case 'Link': PROJECT_DATA.Components.push(new Component_Link(Components[i])); break
+            case 'Text': PROJECT_DATA.Components.push(new Component_Text(Components[i])); break
+            case 'Video': PROJECT_DATA.Components.push(new Component_Video(Components[i])); break
         }
     }
+    updateComponentTreeOnUI()
 }
 
 let isAddingComponent = false
 function setupComponentAdderButtons() {
     $('.ComponentAdder').on('click', function (e) {
         if (!isAddingComponent) {
+            isAddingComponent = true
             let componentType = $(this).attr('data-type')
             $('#Page').addClass('addingNewComponent')
             $('#Page.addingNewComponent').one('click', function (e) {
@@ -106,6 +104,8 @@ function setupComponentAdderButtons() {
 
                 $(this).removeClass('addingNewComponent')
                 addComponentToPage(componentType, e.offsetX, e.offsetY)
+
+                isAddingComponent = false
             })
         }
     })

@@ -1,7 +1,8 @@
-const ALL_COMPONENTS_BY_ID = {}
-
 class ComponentSaveState {
     Type = ''
+    Name = ''
+    class = '' // next times for customizing due to user css'es
+    style = '' // for next times
     ComponentId = 0
     Width = 0
     Height = 0
@@ -23,10 +24,13 @@ class ComponentSaveState {
 
     /**
      * 
-     * @param {{Type:String, ParentDiv:String, ComponentId:Number, Width:Number, Height:Number, Left:Number, Top:Number, Src:String, Href:String, Tooltip:String, ModelUrl:String, Value:String, InnerText:String, Direction:String, ZIndex:Number, Controls:Boolean, Autoplay:Boolean, Loop:Boolean, Muted:Boolean, Poster:String}} stateObject 
+     * @param {{Type:String, Name:String, class:String, style:String, ParentDiv:String, ComponentId:Number, Width:Number, Height:Number, Left:Number, Top:Number, Src:String, Href:String, Tooltip:String, ModelUrl:String, Value:String, InnerText:String, Direction:String, ZIndex:Number, Controls:Boolean, Autoplay:Boolean, Loop:Boolean, Muted:Boolean, Poster:String}} stateObject 
      */
     constructor(stateObject) {
         this.Type = stateObject.Type
+        this.Name = stateObject.Name
+        this.class = stateObject.class
+        this.style = stateObject.style
         this.ParentDiv = stateObject.ParentDiv
         this.ComponentId = stateObject.ComponentId
         this.Width = stateObject.Width
@@ -51,6 +55,7 @@ class ComponentSaveState {
 
 class Component {
     Type = ''
+    Name = ''
     ComponentId
     ParentDiv
     Width = 100
@@ -84,11 +89,18 @@ class Component {
         $(this.ParentDiv).append(this.Element)
 
         setTimeout(function () { _this.#setupEvents() }, 10)
-
-        ALL_COMPONENTS_BY_ID[this.ComponentId] = this
     }
 
-    static getComponentById(id) { return ALL_COMPONENTS_BY_ID[id] }
+    static getComponentById(id) { return PROJECT_DATA.Components.find(c => c.ComponentId == id) || null }
+    static removeOmponentById(id) {
+        PROJECT_DATA.Components = PROJECT_DATA.Components.filter(c => {
+            if (c.ComponentId == id) {
+                $(c.Element).remove()
+                return false
+            }
+            return true
+        })
+    }
     static getType() { return this.Type }
 
     /**
@@ -107,9 +119,14 @@ class Component {
         if (this.#IsOnEditMode) {
             this.Element.addClass('Editable')
             this.#setupResizeHandle(this.#IsOnEditMode)
+
+            $(`#ComponentsTree .ComponentOnTree`).removeClass('selected')
+            $(`#ComponentsTree .ComponentOnTree[data-component-id="${this.ComponentId}"]`).addClass('selected')
         } else {
             this.Element.removeClass('Editable')
             this.#setupResizeHandle(this.#IsOnEditMode)
+
+            $(`#ComponentsTree .ComponentOnTree`).removeClass('selected')
         }
     }
 
@@ -187,6 +204,7 @@ class Component {
     getComponentProperties() {
         return {
             Type: { Type: 'NoEdit', Value: this.Type },
+            Name: { Type: 'String', Value: this.Name },
             Width: { Type: 'Number', Value: this.Width },
             Height: { Type: 'Number', Value: this.Height },
             Left: { Type: 'Number', Value: this.Left },
@@ -197,6 +215,10 @@ class Component {
     }
 
     setValue(key, value) {
+        if (key == 'Name') {
+            $(`#ComponentsTree .ComponentOnTree[data-component-id="${this.ComponentId}"]`).attr('data-name', value)
+        }
+
         this[key] = value
         this.#reloadComponent()
     }
@@ -301,11 +323,13 @@ class Component_3D extends Component {
         super(stateObject)
         this.ModelUrl = stateObject.ModelUrl
         this.Type = '3D Object'
+        this.Name = stateObject.Name ? stateObject.Name : `${this.Type}-${this.ComponentId}`
     }
 
     getSaveState() {
         return new ComponentSaveState({
             Type: this.Type,
+            Name: this.Name,
             ParentDiv: this.ParentDiv.id,
             ComponentId: this.ComponentId,
             Width: this.Width,
@@ -320,6 +344,7 @@ class Component_3D extends Component {
     getComponentProperties() {
         return {
             Type: { Type: 'NoEdit', Value: this.Type },
+            Name: { Type: 'String', Value: this.Name },
             Width: { Type: 'Number', Value: this.Width },
             Height: { Type: 'Number', Value: this.Height },
             Left: { Type: 'Number', Value: this.Left },
@@ -352,11 +377,13 @@ class Component_Button extends Component {
         super(stateObject)
         this.Value = stateObject.Value
         this.Type = 'Button'
+        this.Name = stateObject.Name ? stateObject.Name : `${this.Type}-${this.ComponentId}`
     }
 
     getSaveState() {
         return new ComponentSaveState({
             Type: this.Type,
+            Name: this.Name,
             ParentDiv: this.ParentDiv.id,
             ComponentId: this.ComponentId,
             Width: this.Width,
@@ -372,6 +399,7 @@ class Component_Button extends Component {
     getComponentProperties() {
         return {
             Type: { Type: 'NoEdit', Value: this.Type },
+            Name: { Type: 'String', Value: this.Name },
             Width: { Type: 'Number', Value: this.Width },
             Height: { Type: 'Number', Value: this.Height },
             Left: { Type: 'Number', Value: this.Left },
@@ -406,11 +434,13 @@ class Component_Image extends Component {
         this.Src = stateObject.Src
         this.Alt = stateObject.Alt
         this.Type = 'Image'
+        this.Name = stateObject.Name ? stateObject.Name : `${this.Type}-${this.ComponentId}`
     }
 
     getSaveState() {
         return new ComponentSaveState({
             Type: this.Type,
+            Name: this.Name,
             ParentDiv: this.ParentDiv.id,
             ComponentId: this.ComponentId,
             Width: this.Width,
@@ -427,6 +457,7 @@ class Component_Image extends Component {
     getComponentProperties() {
         return {
             Type: { Type: 'NoEdit', Value: this.Type },
+            Name: { Type: 'String', Value: this.Name },
             Width: { Type: 'Number', Value: this.Width },
             Height: { Type: 'Number', Value: this.Height },
             Left: { Type: 'Number', Value: this.Left },
@@ -466,11 +497,13 @@ class Component_Link extends Component {
         this.Tooltip = stateObject.Tooltip
         this.InnerText = stateObject.InnerText
         this.Type = 'Link'
+        this.Name = stateObject.Name ? stateObject.Name : `${this.Type}-${this.ComponentId}`
     }
 
     getSaveState() {
         return new ComponentSaveState({
             Type: this.Type,
+            Name: this.Name,
             ParentDiv: this.ParentDiv.id,
             ComponentId: this.ComponentId,
             Width: this.Width,
@@ -488,6 +521,7 @@ class Component_Link extends Component {
     getComponentProperties() {
         return {
             Type: { Type: 'NoEdit', Value: this.Type },
+            Name: { Type: 'String', Value: this.Name },
             Width: { Type: 'Number', Value: this.Width },
             Height: { Type: 'Number', Value: this.Height },
             Left: { Type: 'Number', Value: this.Left },
@@ -523,11 +557,13 @@ class Component_Text extends Component {
         super(stateObject)
         this.InnerText = stateObject.InnerText
         this.Type = 'Text'
+        this.Name = stateObject.Name ? stateObject.Name : `${this.Type}-${this.ComponentId}`
     }
 
     getSaveState() {
         return new ComponentSaveState({
             Type: this.Type,
+            Name: this.Name,
             ParentDiv: this.ParentDiv.id,
             ComponentId: this.ComponentId,
             Width: this.Width,
@@ -543,6 +579,7 @@ class Component_Text extends Component {
     getComponentProperties() {
         return {
             Type: { Type: 'NoEdit', Value: this.Type },
+            Name: { Type: 'String', Value: this.Name },
             Width: { Type: 'Number', Value: this.Width },
             Height: { Type: 'Number', Value: this.Height },
             Left: { Type: 'Number', Value: this.Left },
@@ -593,11 +630,13 @@ class Component_Video extends Component {
         this.Muted = stateObject.Muted
         this.Poster = stateObject.Poster
         this.Type = 'Video'
+        this.Name = stateObject.Name ? stateObject.Name : `${this.Type}-${this.ComponentId}`
     }
 
     getSaveState() {
         return new ComponentSaveState({
             Type: this.Type,
+            Name: this.Name,
             ParentDiv: this.ParentDiv.id,
             ComponentId: this.ComponentId,
             Width: this.Width,
@@ -618,6 +657,7 @@ class Component_Video extends Component {
     getComponentProperties() {
         return {
             Type: { Type: 'NoEdit', Value: this.Type },
+            Name: { Type: 'String', Value: this.Name },
             Width: { Type: 'Number', Value: this.Width },
             Height: { Type: 'Number', Value: this.Height },
             Left: { Type: 'Number', Value: this.Left },
